@@ -84,6 +84,7 @@ export default class App extends Component {
 
   render() {
     const { data } = this.state
+    const { appService } = this.props
 
     const appPublicProps = {
       onLeftButtonClick:          this.onLeftButtonClick,
@@ -94,7 +95,7 @@ export default class App extends Component {
       getPageName:                this.getPageName,
       getItemName:                this.getItemName,
     }
-
+    console.log(appService.getPages())
     return <AppProvider value={appPublicProps}>
             <Router>
               <Route path="/:tabKey?" render={({ match: {params : { tabKey }} })=>

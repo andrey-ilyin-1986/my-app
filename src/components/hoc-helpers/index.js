@@ -1,3 +1,3 @@
 import withAppProps from './with-app-props'
-
-export { withAppProps }
+import withAppService from './with-app-service'
+export { withAppProps, withAppService }
