@@ -6,33 +6,6 @@ import Content from '../content'
 
 export default class App extends Component {
 
-  maxId = 0
-
-  state = {
-    data: [
-      this.createItem('Left', [
-        this.createItem('Left 1'),
-        this.createItem('Left 2'),
-        this.createItem('Left 3')
-      ]),
-      this.createItem('Middle', [
-        this.createItem('Middle 1'),
-        this.createItem('Middle 2'),
-        this.createItem('Middle 3')
-      ]),
-      this.createItem('Right', [
-        this.createItem('Right 1'),
-        this.createItem('Right 2'),
-        this.createItem('Right 3')
-      ]),
-    ]
-  }
-
-  createItem(name, data = [])
-  {
-    return {id: this.maxId++, name, data}
-  }
-
   getItemInfo = (item, data) => {
     const parent = data.filter(parent=>parent.data.findIndex(child=>child.id === item.id) > -1)[0]
     const parentIdx = data.findIndex(el=>el.id === parent.id)
@@ -72,6 +45,10 @@ export default class App extends Component {
     return parentIdx === data.length - 1
   }
 
+  getFirstKey = (data) => data.length > 0 ? this.getTabKey(data[0]) : ''
+
+  isKeyExist = (data, key) => data.filter(item=>this.getTabKey(item) === key).length > 0
+
   isVisibleLeftButton = (item) => this.isLastItem(item) || (!this.isFirstItem(item) && !this.isLastItem(item))
 
   isVisibleRightButton = (item) => this.isFirstItem(item) || (!this.isFirstItem(item) && !this.isLastItem(item))
@@ -82,10 +59,23 @@ export default class App extends Component {
 
   getItemName = (idx, item) => `${idx+1}. ${item.name}`
 
-  render() {
-    const { data } = this.state
-    const { appService } = this.props
 
+  componentDidMount() {
+    const { appService, pagesLoaded, pagesRequested } = this.props
+    pagesRequested(); //???
+    appService.getPages().then(data=>pagesLoaded(data))
+  }
+
+  render() {
+    this.state = { data: this.props.pages } //???
+
+    const { data } = this.state
+
+    ////////////////////////???????
+    const { loading } = this.props
+    if(loading) return <h1>Loading...</h1>
+    /////////////////////////??????
+    
     const appPublicProps = {
       onLeftButtonClick:          this.onLeftButtonClick,
       onRightButtonClick:         this.onRightButtonClick,
@@ -95,11 +85,11 @@ export default class App extends Component {
       getPageName:                this.getPageName,
       getItemName:                this.getItemName,
     }
-    console.log(appService.getPages())
+
     return <AppProvider value={appPublicProps}>
             <Router>
               <Route path="/:tabKey?" render={({ match: {params : { tabKey }} })=>
-                <Content data={data} tabKey={tabKey}/>
+                <Content data={data} tabKey={this.isKeyExist(data, tabKey) ? tabKey : this.getFirstKey(data)}/>
               }></Route>
             </Router>
           </AppProvider>

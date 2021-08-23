@@ -1,18 +1,23 @@
-
 const initialState = {
-    pages: []
+    pages: [],
+    loading: true
 }
 
 const reducer = (state = initialState, action) => {
     switch(action.type) {
+        case 'PAGES_REQUESTED':
+            return {
+                pages: [],
+                loading: true
+            }
         case 'PAGES_LOADED':
             return {
-                pages: action.payload
+                pages: action.payload,
+                loading: false
             }
-
         default:
-            return state;
+            return state
     }
 }
 
-export default reducer;
+export default reducer

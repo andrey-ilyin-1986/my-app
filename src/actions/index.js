@@ -5,6 +5,13 @@ const pagesLoaded = (newPages) => {
     }
 }
 
+const pagesRequested = () => {
+    return {
+        type: 'PAGES_REQUESTED'
+    }
+}
+
 export {
-    pagesLoaded
+    pagesLoaded,
+    pagesRequested
 }
