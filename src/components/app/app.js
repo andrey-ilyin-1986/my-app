@@ -1,10 +1,14 @@
-import './app.css'
-import React, { Component } from 'react'
-import { BrowserRouter as Router, Route} from 'react-router-dom'
-import { AppProvider } from '../app-context'
-import Content from '../content'
+import                                    './app.css'
+import React, { Component }               from 'react'
+import { BrowserRouter as Router, Route}  from 'react-router-dom'
+import { AppProvider }                    from '../app-context'
+import Content                            from '../content'
+import { withAppService }                 from '../hoc-helpers'
+import { fetchPages }                     from '../../actions'
+import { compose }                        from '../../utils'
+import { connect }                        from 'react-redux'
 
-export default class App extends Component {
+class App extends Component {
 
   getItemInfo = (item, data) => {
     const parent = data.filter(parent=>parent.data.findIndex(child=>child.id === item.id) > -1)[0]
@@ -15,7 +19,7 @@ export default class App extends Component {
     return { childIdx, parentIdx, parent, prevParent, nextParent }
   }
 
-  onLeftButtonClick = (item) => () => {
+  onLeftButtonClick = item => !this.isVisibleLeftButton(item) ? false : () => {
     this.setState(({data})=>{
       const { childIdx, parentIdx, parent, prevParent } = this.getItemInfo(item, data)
       const newParent = {...parent, data:[...parent.data.slice(0, childIdx), ...parent.data.slice(childIdx + 1)]}
@@ -24,7 +28,7 @@ export default class App extends Component {
     })
   }
 
-  onRightButtonClick = (item) => () => {
+  onRightButtonClick = item => !this.isVisibleRightButton(item) ? false : () => {
     this.setState(({data})=>{
       const { childIdx, parentIdx, parent, nextParent } = this.getItemInfo(item, data)
       const newParent = {...parent, data:[...parent.data.slice(0, childIdx), ...parent.data.slice(childIdx + 1)]}
@@ -33,37 +37,35 @@ export default class App extends Component {
     })
   }
 
-  isFirstItem = (item) => {
+  isFirstItem = item => {
     const {data} = this.state
     const { parentIdx } = this.getItemInfo(item, data)
     return parentIdx === 0
   }
 
-  isLastItem = (item) => {
+  isLastItem = item => {
     const {data} = this.state
     const { parentIdx } = this.getItemInfo(item, data)
     return parentIdx === data.length - 1
   }
 
-  getFirstKey = (data) => data.length > 0 ? this.getTabKey(data[0]) : ''
+  getFirstKey = data => data.length > 0 ? this.getTabKey(data[0]) : ''
 
   isKeyExist = (data, key) => data.filter(item=>this.getTabKey(item) === key).length > 0
 
-  isVisibleLeftButton = (item) => this.isLastItem(item) || (!this.isFirstItem(item) && !this.isLastItem(item))
+  isVisibleLeftButton = item => this.isLastItem(item) || (!this.isFirstItem(item) && !this.isLastItem(item))
 
-  isVisibleRightButton = (item) => this.isFirstItem(item) || (!this.isFirstItem(item) && !this.isLastItem(item))
+  isVisibleRightButton = item => this.isFirstItem(item) || (!this.isFirstItem(item) && !this.isLastItem(item))
 
-  getTabKey = (item) => item.name.toString().toLowerCase()
+  getTabKey = item => item.name.toString().toLowerCase()
 
-  getPageName = (item) => `${item.name.toLowerCase()} page`
+  getPageName = item => `${item.name.toLowerCase()} page`
 
   getItemName = (idx, item) => `${idx+1}. ${item.name}`
 
 
   componentDidMount() {
-    const { appService, pagesLoaded, pagesRequested } = this.props
-    pagesRequested(); //???
-    appService.getPages().then(data=>pagesLoaded(data))
+    this.props.fetchPages()
   }
 
   render() {
@@ -72,15 +74,14 @@ export default class App extends Component {
     const { data } = this.state
 
     ////////////////////////???????
-    const { loading } = this.props
+    const { loading, error } = this.props
     if(loading) return <h1>Loading...</h1>
+    if(error) return <h1>{error.message}</h1>
     /////////////////////////??????
-    
+
     const appPublicProps = {
       onLeftButtonClick:          this.onLeftButtonClick,
       onRightButtonClick:         this.onRightButtonClick,
-      isVisibleLeftButton:        this.isVisibleLeftButton,
-      isVisibleRightButton:       this.isVisibleRightButton,
       getTabKey:                  this.getTabKey,
       getPageName:                this.getPageName,
       getItemName:                this.getItemName,
@@ -96,3 +97,19 @@ export default class App extends Component {
 
   }
 }
+
+const mapStateToProps = state => state
+
+const mapDispatchToProps = (dispatch, { appService }) => {
+  return {
+      fetchPages: fetchPages(appService, dispatch)
+  }
+}
+
+export default withAppService(connect(mapStateToProps, mapDispatchToProps)(App))
+/*
+export default compose(
+  withAppService(),
+  connect(mapStateToProps, mapDispatchToProps)
+)(App);
+*/

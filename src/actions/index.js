@@ -1,17 +1,30 @@
-const pagesLoaded = (newPages) => {
+const pagesRequested = () => {
     return {
-        type: 'PAGES_LOADED',
+        type: 'FETCH_PAGES_REQUEST'
+    }
+}
+
+const pagesLoaded = newPages => {
+    return {
+        type: 'FETCH_PAGES_SUCCESS',
         payload: newPages
     }
 }
 
-const pagesRequested = () => {
+const pagesError = error => {
     return {
-        type: 'PAGES_REQUESTED'
+        type: 'FETCH_PAGES_FAILURE',
+        payload: error
     }
 }
 
+const fetchPages = (appService, dispatch) => () => {
+    dispatch(pagesRequested())
+    appService.getPages()
+      .then(data=>dispatch(pagesLoaded(data)))
+      .catch(error=>dispatch(pagesError(error)))
+}
+
 export {
-    pagesLoaded,
-    pagesRequested
+    fetchPages
 }
