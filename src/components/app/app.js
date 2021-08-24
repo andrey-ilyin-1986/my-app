@@ -106,10 +106,7 @@ const mapDispatchToProps = (dispatch, { appService }) => {
   }
 }
 
-export default withAppService(connect(mapStateToProps, mapDispatchToProps)(App))
-/*
 export default compose(
-  withAppService(),
+  withAppService,
   connect(mapStateToProps, mapDispatchToProps)
 )(App);
-*/
