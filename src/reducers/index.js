@@ -51,12 +51,12 @@ const reducer = (state = initialState, action) => {
                 loading: false,
                 error: action.payload
             }
-        case 'MOVE_ITEM_TO_LEFT':
+        case 'ITEM_MOVED_TO_LEFT':
             return {
                 ...state,
                 data: moveItemToLeft(action.payload, state.data)
             }
-        case 'MOVE_ITEM_TO_RIGHT':
+        case 'ITEM_MOVED_TO_RIGHT':
             return {
                 ...state,
                 data: moveItemToRight(action.payload, state.data)

@@ -18,16 +18,16 @@ const dataError = error => {
     }
 }
 
-const moveItemToLeft = item => {
+const itemMovedToLeft = item => {
     return {
-        type: 'MOVE_ITEM_TO_LEFT',
+        type: 'ITEM_MOVED_TO_LEFT',
         payload: item
     }
 }
 
-const moveItemToRight = item => {
+const itemMovedToRight = item => {
     return {
-        type: 'MOVE_ITEM_TO_RIGHT',
+        type: 'ITEM_MOVED_TO_RIGHT',
         payload: item
     }
 }
@@ -41,6 +41,6 @@ const fetchData = (appService, dispatch) => () => {
 
 export {
     fetchData,
-    moveItemToLeft,
-    moveItemToRight
+    itemMovedToLeft,
+    itemMovedToRight
 }

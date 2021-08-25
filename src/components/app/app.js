@@ -5,8 +5,8 @@ import { AppProvider }                    from '../app-context'
 import   Content                          from '../content'
 import { withAppService }                 from '../hoc-helpers'
 import { fetchData,
-         moveItemToLeft,
-         moveItemToRight }                from '../../actions'
+         itemMovedToLeft,
+         itemMovedToRight }               from '../../actions'
 import { compose }                        from '../../utils'
 import { connect }                        from 'react-redux'
 
@@ -17,9 +17,9 @@ class App extends Component {
     return data.findIndex(el=>el.id === parent.id)
   }
 
-  onLeftButtonClick = item => !this.isVisibleLeftButton(item) ? false : () => this.props.moveItemToLeft(item)
+  onLeftButtonClick = item => !this.isVisibleLeftButton(item) ? false : () => this.props.itemMovedToLeft(item)
 
-  onRightButtonClick = item => !this.isVisibleRightButton(item) ? false : () => this.props.moveItemToRight(item)
+  onRightButtonClick = item => !this.isVisibleRightButton(item) ? false : () => this.props.itemMovedToRight(item)
 
   isFirstItem = item => this.getParentIdx(item, this.props.data) === 0
 
@@ -72,8 +72,8 @@ const mapStateToProps = state => state
 const mapDispatchToProps = (dispatch, { appService }) => {
   return {
     fetchData: fetchData(appService, dispatch),
-    moveItemToLeft: item => dispatch(moveItemToLeft(item)),
-    moveItemToRight: item => dispatch(moveItemToRight(item))
+    itemMovedToLeft: item => dispatch(itemMovedToLeft(item)),
+    itemMovedToRight: item => dispatch(itemMovedToRight(item))
   }
 }
 
