@@ -1,30 +1,46 @@
-const pagesRequested = () => {
+const dataRequested = () => {
     return {
-        type: 'FETCH_PAGES_REQUEST'
+        type: 'FETCH_DATA_REQUEST'
     }
 }
 
-const pagesLoaded = newPages => {
+const dataLoaded = data => {
     return {
-        type: 'FETCH_PAGES_SUCCESS',
-        payload: newPages
+        type: 'FETCH_DATA_SUCCESS',
+        payload: data
     }
 }
 
-const pagesError = error => {
+const dataError = error => {
     return {
-        type: 'FETCH_PAGES_FAILURE',
+        type: 'FETCH_DATA_FAILURE',
         payload: error
     }
 }
 
-const fetchPages = (appService, dispatch) => () => {
-    dispatch(pagesRequested())
-    appService.getPages()
-      .then(data=>dispatch(pagesLoaded(data)))
-      .catch(error=>dispatch(pagesError(error)))
+const moveItemToLeft = item => {
+    return {
+        type: 'MOVE_ITEM_TO_LEFT',
+        payload: item
+    }
+}
+
+const moveItemToRight = item => {
+    return {
+        type: 'MOVE_ITEM_TO_RIGHT',
+        payload: item
+    }
+}
+
+const fetchData = (appService, dispatch) => () => {
+    dispatch(dataRequested())
+    appService.getData()
+      .then(data=>dispatch(dataLoaded(data)))
+      .catch(error=>dispatch(dataError(error)))
 }
 
 export {
-    fetchPages
+    fetchData,
+    moveItemToLeft,
+    moveItemToRight
 }

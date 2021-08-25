@@ -4,6 +4,6 @@ export default class AppService {
 
   getResource = async url => (await fetch(`${this._apiBase}${url}`)).json()
 
-  getPages = () => this.getResource(`/data/`)
+  getData = () => this.getResource(`/data/`)
 
 }

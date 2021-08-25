@@ -1,28 +1,65 @@
 const initialState = {
-    pages: [],
+    data: [],
     loading: true,
     error: null
 }
 
+const getItemInfo = (item, data) => {
+    const parent = data.filter(parent=>parent.data.findIndex(child=>child.id === item.id) > -1)[0]
+    const parentIdx = data.findIndex(el=>el.id === parent.id)
+    const childIdx = parent.data.findIndex(child=>child.id === item.id)
+    const prevParent = data[parentIdx - 1]
+    const nextParent = data[parentIdx + 1]
+    return { childIdx, parentIdx, parent, prevParent, nextParent }
+}
+
+const moveItemToLeft = (item, data) => {
+    const { childIdx, parentIdx, parent, prevParent } = getItemInfo(item, data)
+    const newParent = {...parent, data:[...parent.data.slice(0, childIdx), ...parent.data.slice(childIdx + 1)]}
+    const newPrevParent = {...prevParent, data:[...prevParent.data, {...parent.data[childIdx]}]}
+    return [...data.slice(0, parentIdx - 1), newPrevParent, newParent, ...data.slice(parentIdx + 1)]
+}
+
+const moveItemToRight = (item, data) => {
+    const { childIdx, parentIdx, parent, nextParent } = getItemInfo(item, data)
+    const newParent = {...parent, data:[...parent.data.slice(0, childIdx), ...parent.data.slice(childIdx + 1)]}
+    const newNextParent = {...nextParent, data:[...nextParent.data, {...parent.data[childIdx]}]}
+    return [...data.slice(0, parentIdx), newParent, newNextParent, ...data.slice(parentIdx + 2)]
+}
+
 const reducer = (state = initialState, action) => {
+    console.log(action, state);
     switch(action.type) {
-        case 'FETCH_PAGES_REQUEST':
+        case 'FETCH_DATA_REQUEST':
             return {
-                pages: [],
+                ...state,
+                data: [],
                 loading: true,
                 error: null
             }
-        case 'FETCH_PAGES_SUCCESS':
+        case 'FETCH_DATA_SUCCESS':
             return {
-                pages: action.payload,
+                ...state,
+                data: action.payload,
                 loading: false,
                 error: null
             }
-        case 'FETCH_PAGES_FAILURE':
+        case 'FETCH_DATA_FAILURE':
             return {
-                pages: [],
+                ...state,
+                data: [],
                 loading: false,
                 error: action.payload
+            }
+        case 'MOVE_ITEM_TO_LEFT':
+            return {
+                ...state,
+                data: moveItemToLeft(action.payload, state.data)
+            }
+        case 'MOVE_ITEM_TO_RIGHT':
+            return {
+                ...state,
+                data: moveItemToRight(action.payload, state.data)
             }
         default:
             return state

@@ -1,53 +1,29 @@
 import                                    './app.css'
-import React, { Component }               from 'react'
-import { BrowserRouter as Router, Route}  from 'react-router-dom'
+import   React, { Component }             from 'react'
+import { BrowserRouter, Route}            from 'react-router-dom'
 import { AppProvider }                    from '../app-context'
-import Content                            from '../content'
+import   Content                          from '../content'
 import { withAppService }                 from '../hoc-helpers'
-import { fetchPages }                     from '../../actions'
+import { fetchData,
+         moveItemToLeft,
+         moveItemToRight }                from '../../actions'
 import { compose }                        from '../../utils'
 import { connect }                        from 'react-redux'
 
 class App extends Component {
 
-  getItemInfo = (item, data) => {
+  getParentIdx = (item, data) => {
     const parent = data.filter(parent=>parent.data.findIndex(child=>child.id === item.id) > -1)[0]
-    const parentIdx = data.findIndex(el=>el.id === parent.id)
-    const childIdx = parent.data.findIndex(child=>child.id === item.id)
-    const prevParent = data[parentIdx - 1]
-    const nextParent = data[parentIdx + 1]
-    return { childIdx, parentIdx, parent, prevParent, nextParent }
+    return data.findIndex(el=>el.id === parent.id)
   }
 
-  onLeftButtonClick = item => !this.isVisibleLeftButton(item) ? false : () => {
-    this.setState(({data})=>{
-      const { childIdx, parentIdx, parent, prevParent } = this.getItemInfo(item, data)
-      const newParent = {...parent, data:[...parent.data.slice(0, childIdx), ...parent.data.slice(childIdx + 1)]}
-      const newPrevParent = {...prevParent, data:[...prevParent.data, {...parent.data[childIdx]}]}
-      return { data: [...data.slice(0, parentIdx - 1), newPrevParent, newParent, ...data.slice(parentIdx + 1)]}
-    })
-  }
+  onLeftButtonClick = item => !this.isVisibleLeftButton(item) ? false : () => this.props.moveItemToLeft(item)
 
-  onRightButtonClick = item => !this.isVisibleRightButton(item) ? false : () => {
-    this.setState(({data})=>{
-      const { childIdx, parentIdx, parent, nextParent } = this.getItemInfo(item, data)
-      const newParent = {...parent, data:[...parent.data.slice(0, childIdx), ...parent.data.slice(childIdx + 1)]}
-      const newNextParent = {...nextParent, data:[...nextParent.data, {...parent.data[childIdx]}]}
-      return { data: [...data.slice(0, parentIdx), newParent, newNextParent, ...data.slice(parentIdx + 2)]}
-    })
-  }
+  onRightButtonClick = item => !this.isVisibleRightButton(item) ? false : () => this.props.moveItemToRight(item)
 
-  isFirstItem = item => {
-    const {data} = this.state
-    const { parentIdx } = this.getItemInfo(item, data)
-    return parentIdx === 0
-  }
+  isFirstItem = item => this.getParentIdx(item, this.props.data) === 0
 
-  isLastItem = item => {
-    const {data} = this.state
-    const { parentIdx } = this.getItemInfo(item, data)
-    return parentIdx === data.length - 1
-  }
+  isLastItem = item =>  this.getParentIdx(item, this.props.data) === this.props.data.length - 1
 
   getFirstKey = data => data.length > 0 ? this.getTabKey(data[0]) : ''
 
@@ -63,21 +39,14 @@ class App extends Component {
 
   getItemName = (idx, item) => `${idx+1}. ${item.name}`
 
-
   componentDidMount() {
-    this.props.fetchPages()
+    this.props.fetchData()
   }
 
   render() {
-    this.state = { data: this.props.pages } //???
-
-    const { data } = this.state
-
-    ////////////////////////???????
-    const { loading, error } = this.props
+    const { loading, error, data } = this.props
     if(loading) return <h1>Loading...</h1>
-    if(error) return <h1>{error.message}</h1>
-    /////////////////////////??????
+    if(error)   return <h1>{error.message}</h1>
 
     const appPublicProps = {
       onLeftButtonClick:          this.onLeftButtonClick,
@@ -88,11 +57,11 @@ class App extends Component {
     }
 
     return <AppProvider value={appPublicProps}>
-            <Router>
+            <BrowserRouter>
               <Route path="/:tabKey?" render={({ match: {params : { tabKey }} })=>
                 <Content data={data} tabKey={this.isKeyExist(data, tabKey) ? tabKey : this.getFirstKey(data)}/>
               }></Route>
-            </Router>
+            </BrowserRouter>
           </AppProvider>
 
   }
@@ -102,7 +71,9 @@ const mapStateToProps = state => state
 
 const mapDispatchToProps = (dispatch, { appService }) => {
   return {
-      fetchPages: fetchPages(appService, dispatch)
+    fetchData: fetchData(appService, dispatch),
+    moveItemToLeft: item => dispatch(moveItemToLeft(item)),
+    moveItemToRight: item => dispatch(moveItemToRight(item))
   }
 }
 
