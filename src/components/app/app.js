@@ -37,11 +37,11 @@ class App extends Component {
 
   isVisibleLeftButton     = item          => this.isLastItem(item)
                                               || (!this.isFirstItem(item)
-                                              && !this.isLastItem(item))
+                                                  && !this.isLastItem(item))
 
   isVisibleRightButton    = item          => this.isFirstItem(item)
                                               || (!this.isFirstItem(item)
-                                              && !this.isLastItem(item))
+                                                  && !this.isLastItem(item))
 
   getTabKey               = item          => item.name.toString().toLowerCase()
 
