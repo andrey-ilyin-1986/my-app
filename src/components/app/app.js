@@ -1,6 +1,6 @@
 import                                    './app.css'
 import   React, { Component }             from 'react'
-import { BrowserRouter, Route}            from 'react-router-dom'
+import { BrowserRouter, Route, Redirect}  from 'react-router-dom'
 import { compose }                        from 'redux'
 import { connect }                        from 'react-redux'
 import { AppProvider }                    from '../app-context'
@@ -20,9 +20,13 @@ class App extends Component {
     return data.findIndex(el=>el.id === parent.id)
   }
 
-  onLeftButtonClick = item => !this.isVisibleLeftButton(item) ? false : () => this.props.itemMovedToLeft(item)
+  onLeftButtonClick = item => !this.isVisibleLeftButton(item)
+                                ? false
+                                : () => this.props.itemMovedToLeft(item)
 
-  onRightButtonClick = item => !this.isVisibleRightButton(item) ? false : () => this.props.itemMovedToRight(item)
+  onRightButtonClick = item => !this.isVisibleRightButton(item)
+                                  ? false
+                                  : () => this.props.itemMovedToRight(item)
 
   onSaveButtonClick = data => () => this.props.saveData(data)
 
@@ -30,7 +34,9 @@ class App extends Component {
 
   isLastItem = item =>  this.getParentIdx(item, this.props.data) === this.props.data.length - 1
 
-  getFirstKey = data => data.length > 0 ? this.getTabKey(data[0]) : ''
+  getFirstKey = data => data.length > 0
+                          ? this.getTabKey(data[0])
+                          : ''
 
   isKeyExist = (data, key) => data.filter(item=>this.getTabKey(item) === key).length > 0
 
@@ -51,7 +57,7 @@ class App extends Component {
   render() {
     const { loading, saving, error, data } = this.props
     if(loading) return <h1>Loading...</h1>
-    if(saving) return <h1>Saving...</h1>
+    if(saving)  return <h1>Saving...</h1>
     if(error)   return <h1>{error.message}</h1>
 
     const appPublicProps = {
@@ -66,7 +72,9 @@ class App extends Component {
     return <AppProvider value={appPublicProps}>
             <BrowserRouter>
               <Route path="/:tabKey?" render={({ match: {params : { tabKey }} })=>
-                <Content data={data} tabKey={this.isKeyExist(data, tabKey) ? tabKey : this.getFirstKey(data)}/>
+                this.isKeyExist(data, tabKey)
+                  ? <Content data={data} tabKey={tabKey}/>
+                  : <Redirect to={`/${this.getFirstKey(data)}`}/>
               }></Route>
             </BrowserRouter>
           </AppProvider>

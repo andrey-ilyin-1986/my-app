@@ -1,4 +1,4 @@
-import React from 'react'
+import React                  from 'react'
 import { AppServiceConsumer } from '../app-service-context'
 
 const withAppService = Wrapped => props =>

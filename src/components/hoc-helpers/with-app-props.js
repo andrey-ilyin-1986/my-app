@@ -1,5 +1,5 @@
-import React from 'react'
-import { AppConsumer } from '../app-context'
+import React            from 'react'
+import { AppConsumer }  from '../app-context'
 
 const withAppProps = Wrapped => props =>
   <AppConsumer>

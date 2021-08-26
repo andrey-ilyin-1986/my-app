@@ -1,10 +1,10 @@
-import './pages.css'
-import React from 'react'
-import Record from '../record'
-import Repeater from '../repeater'
+import                  './pages.css'
+import React            from 'react'
+import Record           from '../record'
+import Repeater         from '../repeater'
 import { withAppProps } from '../hoc-helpers'
 
-const Pages = withAppProps(({data, getPageName}) =>
+const Pages = ({data, getPageName}) =>
   <Repeater data={data} className="row">{ item =>
     <div className="col">
       <b>{getPageName(item)}</b>
@@ -13,6 +13,5 @@ const Pages = withAppProps(({data, getPageName}) =>
       }</Repeater>
     </div>
   }</Repeater>
-)
 
-export default Pages
+export default withAppProps(Pages)

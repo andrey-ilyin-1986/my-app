@@ -16,16 +16,54 @@ const getItemInfo = (item, data) => {
 
 const moveItemToLeft = (item, data) => {
     const { childIdx, parentIdx, parent, prevParent } = getItemInfo(item, data)
-    const newParent = {...parent, data:[...parent.data.slice(0, childIdx), ...parent.data.slice(childIdx + 1)]}
-    const newPrevParent = {...prevParent, data:[...prevParent.data, {...parent.data[childIdx]}]}
-    return [...data.slice(0, parentIdx - 1), newPrevParent, newParent, ...data.slice(parentIdx + 1)]
+    const newParent = {
+        ...parent,
+        data:[
+            ...parent.data.slice(0, childIdx),
+            ...parent.data.slice(childIdx + 1)
+        ]
+    }
+    const newPrevParent = {
+        ...prevParent,
+        data:[
+            ...prevParent.data,
+            {
+                ...parent.data[childIdx]
+            }
+        ]
+    }
+    return [
+        ...data.slice(0, parentIdx - 1),
+        newPrevParent,
+        newParent,
+        ...data.slice(parentIdx + 1)
+    ]
 }
 
 const moveItemToRight = (item, data) => {
     const { childIdx, parentIdx, parent, nextParent } = getItemInfo(item, data)
-    const newParent = {...parent, data:[...parent.data.slice(0, childIdx), ...parent.data.slice(childIdx + 1)]}
-    const newNextParent = {...nextParent, data:[...nextParent.data, {...parent.data[childIdx]}]}
-    return [...data.slice(0, parentIdx), newParent, newNextParent, ...data.slice(parentIdx + 2)]
+    const newParent = {
+        ...parent,
+        data:[
+            ...parent.data.slice(0, childIdx),
+            ...parent.data.slice(childIdx + 1)
+        ]
+    }
+    const newNextParent = {
+        ...nextParent,
+        data:[
+            ...nextParent.data,
+            {
+                ...parent.data[childIdx]
+            }
+        ]
+    }
+    return [
+        ...data.slice(0, parentIdx),
+        newParent,
+        newNextParent,
+        ...data.slice(parentIdx + 2)
+    ]
 }
 
 const reducer = (state = initialState, action) => {
