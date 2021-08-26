@@ -1,14 +1,17 @@
 import                                    './app.css'
 import   React, { Component }             from 'react'
 import { BrowserRouter, Route}            from 'react-router-dom'
+import { compose }                        from 'redux'
+import { connect }                        from 'react-redux'
 import { AppProvider }                    from '../app-context'
 import   Content                          from '../content'
 import { withAppService }                 from '../hoc-helpers'
 import { fetchData,
+         saveData,
+         saveItem,
          itemMovedToLeft,
          itemMovedToRight }               from '../../actions'
-import { compose }                        from '../../utils'
-import { connect }                        from 'react-redux'
+
 
 class App extends Component {
 
@@ -20,6 +23,8 @@ class App extends Component {
   onLeftButtonClick = item => !this.isVisibleLeftButton(item) ? false : () => this.props.itemMovedToLeft(item)
 
   onRightButtonClick = item => !this.isVisibleRightButton(item) ? false : () => this.props.itemMovedToRight(item)
+
+  onSaveButtonClick = data => () => this.props.saveData(data)
 
   isFirstItem = item => this.getParentIdx(item, this.props.data) === 0
 
@@ -44,13 +49,15 @@ class App extends Component {
   }
 
   render() {
-    const { loading, error, data } = this.props
+    const { loading, saving, error, data } = this.props
     if(loading) return <h1>Loading...</h1>
+    if(saving) return <h1>Saving...</h1>
     if(error)   return <h1>{error.message}</h1>
 
     const appPublicProps = {
       onLeftButtonClick:          this.onLeftButtonClick,
       onRightButtonClick:         this.onRightButtonClick,
+      onSaveButtonClick:          this.onSaveButtonClick,
       getTabKey:                  this.getTabKey,
       getPageName:                this.getPageName,
       getItemName:                this.getItemName,
@@ -72,6 +79,8 @@ const mapStateToProps = state => state
 const mapDispatchToProps = (dispatch, { appService }) => {
   return {
     fetchData: fetchData(appService, dispatch),
+    saveData: saveData(appService, dispatch),
+    saveItem: saveItem(appService, dispatch),
     itemMovedToLeft: item => dispatch(itemMovedToLeft(item)),
     itemMovedToRight: item => dispatch(itemMovedToRight(item))
   }

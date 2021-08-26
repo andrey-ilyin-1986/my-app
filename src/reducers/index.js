@@ -1,6 +1,7 @@
 const initialState = {
     data: [],
     loading: true,
+    saving: false,
     error: null
 }
 
@@ -44,11 +45,29 @@ const reducer = (state = initialState, action) => {
                 loading: false,
                 error: null
             }
-        case 'FETCH_DATA_FAILURE':
+        case 'FETCH_DATA_ERROR':
             return {
                 ...state,
                 data: [],
                 loading: false,
+                error: action.payload
+            }
+        case 'SAVE_DATA_REQUEST':
+            return {
+                ...state,
+                saving: true,
+                error: null
+            }
+        case 'SAVE_DATA_SUCCESS':
+            return {
+                ...state,
+                saving: false,
+                error: null
+            }
+        case 'SAVE_DATA_ERROR':
+            return {
+                ...state,
+                saving: false,
                 error: action.payload
             }
         case 'ITEM_MOVED_TO_LEFT':
