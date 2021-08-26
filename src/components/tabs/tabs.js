@@ -4,14 +4,15 @@ import { Link }           from 'react-router-dom'
 import Repeater           from '../repeater'
 import { withAppProps }   from '../hoc-helpers'
 
-const Tabs = withAppProps(({data, tabKey, getTabKey}) =>
+const Tabs = ({data, tabKey, getTabKey}) =>
   <Repeater data={data} className="nav nav-tabs">{ item =>
       <div className="nav-item">
-          <Link className={`nav-link ${getTabKey(item) === tabKey ? "active" : ""}`} to={`/${getTabKey(item)}`}>
+          <Link className={`nav-link ${getTabKey(item) === tabKey ? "active" : ""}`}
+                to={`/${getTabKey(item)}`}
+          >
             {item.name}
           </Link>
       </div>
   }</Repeater>
-)
 
-export default Tabs
+export default withAppProps(Tabs)

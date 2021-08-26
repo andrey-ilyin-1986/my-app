@@ -15,40 +15,44 @@ import { fetchData,
 
 class App extends Component {
 
+  onLeftButtonClick       = item          => !this.isVisibleLeftButton(item)
+                                                ? false
+                                                : () => this.props.itemMovedToLeft(item)
+
+  onRightButtonClick      = item          => !this.isVisibleRightButton(item)
+                                                ? false
+                                                : () => this.props.itemMovedToRight(item)
+
+  onSaveButtonClick       = data          => () => this.props.saveData(data)
+
+  isFirstItem             = item          => this.getParentIdx(item, this.props.data) === 0
+
+  isLastItem              = item          => this.getParentIdx(item, this.props.data) === this.props.data.length - 1
+
+  getFirstKey             = data          => data.length > 0
+                                              ? this.getTabKey(data[0])
+                                              : ''
+
+  isKeyExist              = (data, key)   => data.filter(item=>this.getTabKey(item) === key).length > 0
+
+  isVisibleLeftButton     = item          => this.isLastItem(item)
+                                              || (!this.isFirstItem(item)
+                                              && !this.isLastItem(item))
+
+  isVisibleRightButton    = item          => this.isFirstItem(item)
+                                              || (!this.isFirstItem(item)
+                                              && !this.isLastItem(item))
+
+  getTabKey               = item          => item.name.toString().toLowerCase()
+
+  getPageName             = item          => `${item.name.toLowerCase()} page`
+
+  getItemName             = (idx, item)   => `${idx+1}. ${item.name}`
+
   getParentIdx = (item, data) => {
     const parent = data.filter(parent=>parent.data.findIndex(child=>child.id === item.id) > -1)[0]
     return data.findIndex(el=>el.id === parent.id)
   }
-
-  onLeftButtonClick = item => !this.isVisibleLeftButton(item)
-                                ? false
-                                : () => this.props.itemMovedToLeft(item)
-
-  onRightButtonClick = item => !this.isVisibleRightButton(item)
-                                  ? false
-                                  : () => this.props.itemMovedToRight(item)
-
-  onSaveButtonClick = data => () => this.props.saveData(data)
-
-  isFirstItem = item => this.getParentIdx(item, this.props.data) === 0
-
-  isLastItem = item =>  this.getParentIdx(item, this.props.data) === this.props.data.length - 1
-
-  getFirstKey = data => data.length > 0
-                          ? this.getTabKey(data[0])
-                          : ''
-
-  isKeyExist = (data, key) => data.filter(item=>this.getTabKey(item) === key).length > 0
-
-  isVisibleLeftButton = item => this.isLastItem(item) || (!this.isFirstItem(item) && !this.isLastItem(item))
-
-  isVisibleRightButton = item => this.isFirstItem(item) || (!this.isFirstItem(item) && !this.isLastItem(item))
-
-  getTabKey = item => item.name.toString().toLowerCase()
-
-  getPageName = item => `${item.name.toLowerCase()} page`
-
-  getItemName = (idx, item) => `${idx+1}. ${item.name}`
 
   componentDidMount() {
     this.props.fetchData()
@@ -82,7 +86,7 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = state => state
+const mapStateToProps   = state => state
 
 const mapDispatchToProps = (dispatch, { appService }) => {
   return {
@@ -97,4 +101,4 @@ const mapDispatchToProps = (dispatch, { appService }) => {
 export default compose(
   withAppService,
   connect(mapStateToProps, mapDispatchToProps)
-)(App);
+)(App)

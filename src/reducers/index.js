@@ -6,11 +6,11 @@ const initialState = {
 }
 
 const getItemInfo = (item, data) => {
-    const parent = data.filter(parent=>parent.data.findIndex(child=>child.id === item.id) > -1)[0]
-    const parentIdx = data.findIndex(el=>el.id === parent.id)
-    const childIdx = parent.data.findIndex(child=>child.id === item.id)
-    const prevParent = data[parentIdx - 1]
-    const nextParent = data[parentIdx + 1]
+    const parent        = data.filter(parent=>parent.data.findIndex(child=>child.id === item.id) > -1)[0]
+    const parentIdx     = data.findIndex(el=>el.id === parent.id)
+    const childIdx      = parent.data.findIndex(child=>child.id === item.id)
+    const prevParent    = data[parentIdx - 1]
+    const nextParent    = data[parentIdx + 1]
     return { childIdx, parentIdx, parent, prevParent, nextParent }
 }
 
@@ -67,7 +67,6 @@ const moveItemToRight = (item, data) => {
 }
 
 const reducer = (state = initialState, action) => {
-    console.log(action, state);
     switch(action.type) {
         case 'FETCH_DATA_REQUEST':
             return {
