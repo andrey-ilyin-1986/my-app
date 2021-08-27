@@ -4,12 +4,30 @@ import Record           from '../record'
 import Repeater         from '../repeater'
 import { withAppProps } from '../hoc-helpers'
 
-const Pages = ({data, getPageName}) =>
-  <Repeater data={data} className="row">{ item =>
+const Pages = ({
+    data, getItemName, getPageName,
+    onLeftButtonClickItem, onRightButtonClickItem, onCheckBoxClickItem,
+    onLeftButtonClickPage, onRightButtonClickPage, onCheckBoxClickPage
+  }) =>
+  <Repeater data={data} className="row">{ page =>
     <div className="col">
-      <b>{getPageName(item)}</b>
-      <Repeater data={item.data} className="item-list list-group">{ (item, idx) =>
-        <Record idx={idx} item={item}/>
+      <Record
+        item={page}
+        className="list-group-item bg-info"
+        getName={getPageName()}
+        onLeftButtonClick={onLeftButtonClickPage}
+        onRightButtonClick={onRightButtonClickPage}
+        onCheckBoxClick={onCheckBoxClickPage}
+      />
+      <Repeater data={page.data} className="item-list list-group">{ (item, idx) =>
+        <Record
+          item={item}
+          className="list-group-item"
+          getName={getItemName(idx)}
+          onLeftButtonClick={onLeftButtonClickItem}
+          onRightButtonClick={onRightButtonClickItem}
+          onCheckBoxClick={onCheckBoxClickItem}
+        />
       }</Repeater>
     </div>
   }</Repeater>

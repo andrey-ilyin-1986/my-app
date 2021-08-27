@@ -12,7 +12,7 @@ const Content = ({data, tabKey, getTabKey, onSaveButtonClick}) =>
     <Pages data={data.filter((item)=>getTabKey(item) === tabKey)} />
     <div className="row">
       <div className="col-12 d-grid gap-2 d-md-flex justify-content-md-center">
-        <button type="button" className="btn btn-primary btn-sm" onClick={onSaveButtonClick(data)}>Save</button>
+        <button type="button" className="btn btn-primary btn-lg" onClick={onSaveButtonClick(data)}>Save</button>
       </div>
     </div>
   </div>

@@ -2,10 +2,22 @@ import                  './record.css'
 import React            from 'react'
 import { withAppProps } from '../hoc-helpers'
 
-const Record = ({idx, item, onLeftButtonClick, onRightButtonClick, getItemName}) =>
-  <div className="list-group-item">
+const Record = ({item, onLeftButtonClick, onRightButtonClick, onCheckBoxClick, getName, className}) =>
+  <div className={className}>
       <div className="row">
-          <div className="col-6">{getItemName(idx, item)}</div>
+          <div className="col-6">
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                onChange={onCheckBoxClick(item)}
+                checked={item.checked}
+              />
+              <label className="form-check-label">
+                {getName(item)}
+              </label>
+            </div>
+          </div>
           <div className="col-6 d-grid gap-2 d-md-flex justify-content-md-end">
               {
                 onLeftButtonClick(item)

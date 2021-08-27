@@ -5,16 +5,23 @@ const initialState = {
     error: null
 }
 
-const getItemInfo = (item, data) => {
+const getPageInfo       = (item, data)      => {
+    const pageIdx       = data.findIndex(el=>el.id === item.id)
+    const page          = data[pageIdx]
+    return { pageIdx, page }
+}
+
+const getItemInfo       = (item, data)      => {
     const parent        = data.filter(parent=>parent.data.findIndex(child=>child.id === item.id) > -1)[0]
     const parentIdx     = data.findIndex(el=>el.id === parent.id)
     const childIdx      = parent.data.findIndex(child=>child.id === item.id)
+    const child         = parent.data[childIdx]
     const prevParent    = data[parentIdx - 1]
     const nextParent    = data[parentIdx + 1]
-    return { childIdx, parentIdx, parent, prevParent, nextParent }
+    return { childIdx, parentIdx, child, parent, prevParent, nextParent }
 }
 
-const moveItemToLeft = (item, data) => {
+const moveItemToLeft    = (item, data)      => {
     const { childIdx, parentIdx, parent, prevParent } = getItemInfo(item, data)
     const newParent = {
         ...parent,
@@ -23,6 +30,7 @@ const moveItemToLeft = (item, data) => {
             ...parent.data.slice(childIdx + 1)
         ]
     }
+    newParent.checked = isPageChecked(newParent)
     const newPrevParent = {
         ...prevParent,
         data:[
@@ -32,6 +40,7 @@ const moveItemToLeft = (item, data) => {
             }
         ]
     }
+    newPrevParent.checked = isPageChecked(newPrevParent)
     return [
         ...data.slice(0, parentIdx - 1),
         newPrevParent,
@@ -40,7 +49,7 @@ const moveItemToLeft = (item, data) => {
     ]
 }
 
-const moveItemToRight = (item, data) => {
+const moveItemToRight   = (item, data)      => {
     const { childIdx, parentIdx, parent, nextParent } = getItemInfo(item, data)
     const newParent = {
         ...parent,
@@ -49,6 +58,7 @@ const moveItemToRight = (item, data) => {
             ...parent.data.slice(childIdx + 1)
         ]
     }
+    newParent.checked = isPageChecked(newParent)
     const newNextParent = {
         ...nextParent,
         data:[
@@ -58,6 +68,7 @@ const moveItemToRight = (item, data) => {
             }
         ]
     }
+    newNextParent.checked = isPageChecked(newNextParent)
     return [
         ...data.slice(0, parentIdx),
         newParent,
@@ -65,6 +76,62 @@ const moveItemToRight = (item, data) => {
         ...data.slice(parentIdx + 2)
     ]
 }
+
+const clickItem         = (item, data)      => {
+    const { childIdx, parentIdx, child, parent } = getItemInfo(item, data)
+    const newChild = {
+        ...child,
+        checked: !child.checked
+    }
+    const newParent = {
+        ...parent,
+        data:[
+            ...parent.data.slice(0, childIdx),
+            newChild,
+            ...parent.data.slice(childIdx + 1)
+        ]
+    }
+    newParent.checked = isPageChecked(newParent)
+    return [
+        ...data.slice(0, parentIdx),
+        newParent,
+        ...data.slice(parentIdx + 1)
+    ]
+}
+
+const clickPage         = (item, data)      => {
+    const { pageIdx, page } = getPageInfo(item, data)
+    const newPage = {
+        ...page,
+        checked: !page.checked,
+        data: page.data.map(child => {
+            return {
+                ...child,
+                checked: !page.checked}
+            }
+        )
+    }
+    return [
+        ...data.slice(0, pageIdx),
+        newPage,
+        ...data.slice(pageIdx + 1)
+    ]
+}
+
+const isPageChecked     = page              => page.data.reduce((checked,child) => checked && child.checked, page.data.length !== 0)
+
+const prepareData = (data) => data.map(page => {
+                                return {
+                                    ...page,
+                                    checked: false,
+                                    data: page.data.map(item => {
+                                        return {
+                                            ...item,
+                                            checked: false
+                                        }
+                                    })
+                                }
+                            })
 
 const reducer = (state = initialState, action) => {
     switch(action.type) {
@@ -78,7 +145,7 @@ const reducer = (state = initialState, action) => {
         case 'FETCH_DATA_SUCCESS':
             return {
                 ...state,
-                data: action.payload,
+                data: prepareData(action.payload),
                 loading: false,
                 error: null
             }
@@ -116,6 +183,16 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 data: moveItemToRight(action.payload, state.data)
+            }
+        case 'ITEM_CLICKED':
+            return {
+                ...state,
+                data: clickItem(action.payload, state.data)
+            }
+        case 'PAGE_CLICKED':
+            return {
+                ...state,
+                data: clickPage(action.payload, state.data)
             }
         default:
             return state

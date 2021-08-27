@@ -52,6 +52,20 @@ const itemMovedToRight = item => {
     }
 }
 
+const itemClicked = item => {
+    return {
+        type: 'ITEM_CLICKED',
+        payload: item
+    }
+}
+
+const pageClicked = page => {
+    return {
+        type: 'PAGE_CLICKED',
+        payload: page
+    }
+}
+
 const fetchData = (appService, dispatch) => () => {
     dispatch(fetchDataRequest())
     appService.getData()
@@ -79,6 +93,8 @@ export {
     fetchData,
     saveData,
     saveItem,
+    itemClicked,
+    pageClicked,
     itemMovedToLeft,
     itemMovedToRight
 }
