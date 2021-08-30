@@ -38,31 +38,17 @@ const saveDataError = error => {
     }
 }
 
-const itemMovedToLeft = item => {
+const itemsMovedToLeft = items => {
     return {
-        type: 'ITEM_MOVED_TO_LEFT',
-        payload: item
+        type: 'ITEMS_MOVED_TO_LEFT',
+        payload: items
     }
 }
 
-const itemMovedToRight = item => {
+const itemsMovedToRight = items => {
     return {
-        type: 'ITEM_MOVED_TO_RIGHT',
-        payload: item
-    }
-}
-
-const itemClicked = item => {
-    return {
-        type: 'ITEM_CLICKED',
-        payload: item
-    }
-}
-
-const pageClicked = page => {
-    return {
-        type: 'PAGE_CLICKED',
-        payload: page
+        type: 'ITEMS_MOVED_TO_RIGHT',
+        payload: items
     }
 }
 
@@ -93,8 +79,6 @@ export {
     fetchData,
     saveData,
     saveItem,
-    itemClicked,
-    pageClicked,
-    itemMovedToLeft,
-    itemMovedToRight
+    itemsMovedToLeft,
+    itemsMovedToRight
 }

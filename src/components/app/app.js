@@ -9,40 +9,29 @@ import { withAppService }                 from '../hoc-helpers'
 import { fetchData,
          saveData,
          saveItem,
-         itemClicked,
-         pageClicked,
-         itemMovedToLeft,
-         itemMovedToRight }               from '../../actions'
+         itemsMovedToLeft,
+         itemsMovedToRight }               from '../../actions'
 
 
 class App extends Component {
 
-  onLeftButtonClickItem   = item          => !this.isVisibleLeftButtonItem(item)
+  onItemLeftButtonClick   = item          => !this.isVisibleLeftButtonItem(item)
                                                 ? false
-                                                : () => this.props.itemMovedToLeft(item)
+                                                : () => this.props.itemsMovedToLeft([item])
 
-  onRightButtonClickItem  = item          => !this.isVisibleRightButtonItem(item)
+  onItemRightButtonClick  = item          => !this.isVisibleRightButtonItem(item)
                                                 ? false
-                                                : () => this.props.itemMovedToRight(item)
+                                                : () => this.props.itemsMovedToRight([item])
 
-  onCheckBoxClickItem     = item          => () => this.props.itemClicked(item)
-
-  onLeftButtonClickPage   = page          => !this.isVisibleLeftButtonPage(page)
+  onPageLeftButtonClick   = ids => page   => !this.isVisibleLeftButtonPage(page)
                                                 ? false
-                                                : () => page.data.forEach(item => item.checked && this.props.itemMovedToLeft(item))
+                                                : () => this.props.itemsMovedToLeft(page.data.filter(item => ids.filter(id=>id===item.id).length > 0))
 
-  onRightButtonClickPage  = page          => !this.isVisibleRightButtonPage(page)
+  onPageRightButtonClick  = ids => page   => !this.isVisibleRightButtonPage(page)
                                                 ? false
-                                                : () => page.data.forEach(item => item.checked && this.props.itemMovedToRight(item))
+                                                : () => this.props.itemsMovedToRight(page.data.filter(item => ids.filter(id=>id===item.id).length > 0))
 
-  onCheckBoxClickPage     = page          => () => this.props.pageClicked(page)
-
-  onSaveButtonClick       = data          => () => this.props.saveData(data.map(({checked, ...page}) => {
-                                                      return {
-                                                        ...page,
-                                                        data: page.data.map(({checked, ...item}) => item)
-                                                      }
-                                                    }))
+  onSaveButtonClick       = data          => () => this.props.saveData(data)
 
   isFirstItem             = item          => this.getParentIdx(item, this.props.data) === 0
 
@@ -97,12 +86,10 @@ class App extends Component {
     if(error)   return <h1>{error.message}</h1>
 
     const appPublicProps = {
-      onLeftButtonClickItem:      this.onLeftButtonClickItem,
-      onRightButtonClickItem:     this.onRightButtonClickItem,
-      onCheckBoxClickItem:        this.onCheckBoxClickItem,
-      onLeftButtonClickPage:      this.onLeftButtonClickPage,
-      onRightButtonClickPage:     this.onRightButtonClickPage,
-      onCheckBoxClickPage:        this.onCheckBoxClickPage,
+      onItemLeftButtonClick:      this.onItemLeftButtonClick,
+      onItemRightButtonClick:     this.onItemRightButtonClick,
+      onPageLeftButtonClick:      this.onPageLeftButtonClick,
+      onPageRightButtonClick:     this.onPageRightButtonClick,
       onSaveButtonClick:          this.onSaveButtonClick,
       getTabKey:                  this.getTabKey,
       getPageName:                this.getPageName,
@@ -129,10 +116,8 @@ const mapDispatchToProps  = (dispatch, { appService }) => {
     fetchData:            fetchData(appService, dispatch),
     saveData:             saveData(appService, dispatch),
     saveItem:             saveItem(appService, dispatch),
-    itemClicked:          item => dispatch(itemClicked(item)),
-    pageClicked:          page => dispatch(pageClicked(page)),
-    itemMovedToLeft:      item => dispatch(itemMovedToLeft(item)),
-    itemMovedToRight:     item => dispatch(itemMovedToRight(item))
+    itemsMovedToLeft:     items => dispatch(itemsMovedToLeft(items)),
+    itemsMovedToRight:    items => dispatch(itemsMovedToRight(items))
   }
 }
 
