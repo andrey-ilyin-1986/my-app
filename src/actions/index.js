@@ -1,44 +1,44 @@
-const fetchDataRequest = () => {
+const fetchDataRequest = ()     => {
     return {
         type: 'FETCH_DATA_REQUEST'
     }
 }
 
-const fetchDataSuccess = data => {
+const fetchDataSuccess = data   => {
     return {
         type: 'FETCH_DATA_SUCCESS',
         payload: data
     }
 }
 
-const fetchDataError = error => {
+const fetchDataError = error    => {
     return {
         type: 'FETCH_DATA_ERROR',
         payload: error
     }
 }
 
-const saveDataRequest = () => {
+const saveDataRequest = ()      => {
     return {
         type: 'SAVE_DATA_REQUEST'
     }
 }
 
-const saveDataSuccess = data => {
+const saveDataSuccess = data    => {
     return {
         type: 'SAVE_DATA_SUCCESS',
         payload: data
     }
 }
 
-const saveDataError = error => {
+const saveDataError = error     => {
     return {
         type: 'SAVE_DATA_ERROR',
         payload: error
     }
 }
 
-const itemsMovedToLeft = items => {
+const itemsMovedToLeft = items  => {
     return {
         type: 'ITEMS_MOVED_TO_LEFT',
         payload: items
@@ -52,27 +52,27 @@ const itemsMovedToRight = items => {
     }
 }
 
-const fetchData = (appService, dispatch) => () => {
+const fetchData = (appService, dispatch)    => ()       => {
     dispatch(fetchDataRequest())
     appService.getData()
-        .then(response=>response.json())
-        .then(data=>dispatch(fetchDataSuccess(data)))
-        .catch(error=>dispatch(fetchDataError(error)))
+              .then(response=>  response.json())
+              .then(data=>      dispatch(fetchDataSuccess(data)))
+              .catch(error=>    dispatch(fetchDataError(error)))
 }
 
-const saveData = (appService, dispatch) => (data) => {
+const saveData = (appService, dispatch)     => (data)   => {
     dispatch(saveDataRequest())
     Promise.all(data.map(item=>appService.saveItem(item)))
-        .then(data=>dispatch(saveDataSuccess(data)))
-        .catch(error=>dispatch(saveDataError(error)))
+           .then(data=>         dispatch(saveDataSuccess(data)))
+           .catch(error=>       dispatch(saveDataError(error)))
 }
 
-const saveItem = (appService, dispatch) => (item) => {
+const saveItem = (appService, dispatch)     => (item)   => {
     dispatch(saveDataRequest())
     appService.saveItem(item)
-        .then(response=>response.text())
-        .then(data=>dispatch(saveDataSuccess(data)))
-        .catch(error=>dispatch(saveDataError(error)))
+              .then(response=>  response.text())
+              .then(data=>      dispatch(saveDataSuccess(data)))
+              .catch(error=>    dispatch(saveDataError(error)))
 }
 
 export {
