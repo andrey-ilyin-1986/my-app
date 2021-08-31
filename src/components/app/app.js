@@ -8,7 +8,6 @@ import   Content                          from '../content'
 import { withAppService }                 from '../hoc-helpers'
 import { fetchData,
          saveData,
-         saveItem,
          itemsMovedToLeft,
          itemsMovedToRight }               from '../../actions'
 
@@ -25,11 +24,11 @@ class App extends Component {
 
   onPageLeftButtonClick   = ids => page   => !this.isVisibleLeftButtonPage(page)
                                                 ? false
-                                                : () => this.props.itemsMovedToLeft(page.data.filter(item => ids.filter(id=>id===item.id).length > 0))
+                                                : () => this.props.itemsMovedToLeft(page.data.filter(item => ids.includes(item.id)))
 
   onPageRightButtonClick  = ids => page   => !this.isVisibleRightButtonPage(page)
                                                 ? false
-                                                : () => this.props.itemsMovedToRight(page.data.filter(item => ids.filter(id=>id===item.id).length > 0))
+                                                : () => this.props.itemsMovedToRight(page.data.filter(item => ids.includes(item.id)))
 
   onSaveButtonClick       = data          => () => this.props.saveData(data)
 
@@ -59,7 +58,7 @@ class App extends Component {
                                               || (!this.isFirstPage(page)
                                                     && !this.isLastPage(page))
 
-  isVisibleRightButtonPage = page          => this.isFirstPage(page)
+  isVisibleRightButtonPage = page         => this.isFirstPage(page)
                                               || (!this.isFirstPage(page)
                                                     && !this.isLastPage(page))
 
@@ -69,7 +68,7 @@ class App extends Component {
 
   getItemName             = idx => item   => `${idx+1}. ${item.name}`
 
-  getParentIdx = (item, data) => {
+  getParentIdx = (item, data)             => {
     const parent = data.filter(parent=>parent.data.findIndex(child=>child.id === item.id) > -1)[0]
     return data.findIndex(el=>el.id === parent.id)
   }
@@ -115,7 +114,6 @@ const mapDispatchToProps  = (dispatch, { appService }) => {
   return {
     fetchData:            fetchData(appService, dispatch),
     saveData:             saveData(appService, dispatch),
-    saveItem:             saveItem(appService, dispatch),
     itemsMovedToLeft:     items => dispatch(itemsMovedToLeft(items)),
     itemsMovedToRight:    items => dispatch(itemsMovedToRight(items))
   }

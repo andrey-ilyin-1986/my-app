@@ -37,8 +37,9 @@ class Page extends Component {
   componentDidUpdate(prevProps) {
     const currentItems = this.props.data.data
     const prevItems = prevProps.data.data
+    const { selectedIds } = this.state
     if(currentItems.length !== prevItems.length) {
-      var newSelectedIds = currentItems.filter(item=>this.state.selectedIds.filter(id=>id===item.id)>0).map(item=>item.id)
+      var newSelectedIds = currentItems.filter(item=>selectedIds.includes(item.id)).map(item=>item.id)
       this.setState({
         selected:     currentItems.length > 0 && currentItems.length === newSelectedIds.length,
         selectedIds:  newSelectedIds
