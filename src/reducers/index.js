@@ -5,70 +5,43 @@ const initialState = {
     error: null
 }
 
-const getItemInfo       = (item, data)      => {
-    const parent        = data.filter(parent=>parent.data.findIndex(child=>child.id === item.id) > -1)[0]
-    const parentIdx     = data.findIndex(el=>el.id === parent.id)
-    const childIdx      = parent.data.findIndex(child=>child.id === item.id)
-    const prevParent    = data[parentIdx - 1]
-    const nextParent    = data[parentIdx + 1]
-    return { childIdx, parentIdx, parent, prevParent, nextParent }
+const getItemInfo       = (item, data)                  => {
+    const pages         = Object.keys(data)
+    const currentPage   = pages.filter(parent=>data[parent].findIndex(child=>child.id === item.id) > -1)[0]
+    const pageIdx       = pages.findIndex(el=>el === currentPage)
+    const itemIdx       = data[currentPage].findIndex(child=>child.id === item.id)
+    const prevPage      = pages[pageIdx - 1]
+    const nextPage      = pages[pageIdx + 1]
+    return { itemIdx, currentPage, prevPage, nextPage }
 }
 
-const moveItemToLeft    = (item, data)      => {
-    const { childIdx, parentIdx, parent, prevParent } = getItemInfo(item, data)
-    const newParent = {
-        ...parent,
-        data:[
-            ...parent.data.slice(0, childIdx),
-            ...parent.data.slice(childIdx + 1)
+const moveItem          = (itemIdx, from, to, data)     => {
+    return {
+        ...data,
+        [to]: [
+            ...data[to],
+            { ...data[from][itemIdx] }
+        ],
+        [from]: [
+            ...data[from].slice(0, itemIdx),
+            ...data[from].slice(itemIdx + 1)
         ]
     }
-    const newPrevParent = {
-        ...prevParent,
-        data:[
-            ...prevParent.data,
-            {
-                ...parent.data[childIdx]
-            }
-        ]
-    }
-    return [
-        ...data.slice(0, parentIdx - 1),
-        newPrevParent,
-        newParent,
-        ...data.slice(parentIdx + 1)
-    ]
 }
 
-const moveItemToRight   = (item, data)      => {
-    const { childIdx, parentIdx, parent, nextParent } = getItemInfo(item, data)
-    const newParent = {
-        ...parent,
-        data:[
-            ...parent.data.slice(0, childIdx),
-            ...parent.data.slice(childIdx + 1)
-        ]
-    }
-    const newNextParent = {
-        ...nextParent,
-        data:[
-            ...nextParent.data,
-            {
-                ...parent.data[childIdx]
-            }
-        ]
-    }
-    return [
-        ...data.slice(0, parentIdx),
-        newParent,
-        newNextParent,
-        ...data.slice(parentIdx + 2)
-    ]
+const moveItemToLeft    = (item, data)                  => {
+    const { itemIdx, currentPage, prevPage } = getItemInfo(item, data)
+    return moveItem(itemIdx, currentPage, prevPage, data)
 }
 
-const moveItemsToLeft    = (items, data)       => items.reduce((data, item)=>moveItemToLeft(item, data), data)
+const moveItemToRight   = (item, data)                  => {
+    const { itemIdx, currentPage, nextPage } = getItemInfo(item, data)
+    return moveItem(itemIdx, currentPage, nextPage, data)
+}
 
-const moveItemsToRight    = (items, data)      => items.reduce((data, item)=>moveItemToRight(item, data), data)
+const moveItemsToLeft     = (items, data)               => items.reduce((data, item)=>moveItemToLeft(item, data), data)
+
+const moveItemsToRight    = (items, data)               => items.reduce((data, item)=>moveItemToRight(item, data), data)
 
 const reducer = (state = initialState, action) => {
     switch(action.type) {

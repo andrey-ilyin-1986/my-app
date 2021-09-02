@@ -55,30 +55,22 @@ const itemsMovedToRight = items => {
 const fetchData = (appService, dispatch)    => ()       => {
     dispatch(fetchDataRequest())
     appService.getData()
-              .then(response=>  response.json())
-              .then(data=>      dispatch(fetchDataSuccess(data)))
-              .catch(error=>    dispatch(fetchDataError(error)))
+              .then     (response   => response.json())
+              .then     (data       => dispatch(fetchDataSuccess(data)))
+              .catch    (error      => dispatch(fetchDataError(error)))
 }
 
-const saveData = (appService, dispatch)     => (data)   => {
+const saveData = (appService, dispatch)     => data     => {
     dispatch(saveDataRequest())
-    Promise.all(data.map(item=>appService.saveItem(item)))
-           .then(data=>         dispatch(saveDataSuccess(data)))
-           .catch(error=>       dispatch(saveDataError(error)))
-}
-
-const saveItem = (appService, dispatch)     => (item)   => {
-    dispatch(saveDataRequest())
-    appService.saveItem(item)
-              .then(response=>  response.text())
-              .then(data=>      dispatch(saveDataSuccess(data)))
-              .catch(error=>    dispatch(saveDataError(error)))
+    appService.saveData(data)
+              .then     (response   => response.text())
+              .then     (data       => dispatch(saveDataSuccess(data)))
+              .catch    (error      => dispatch(saveDataError(error)))
 }
 
 export {
     fetchData,
     saveData,
-    saveItem,
     itemsMovedToLeft,
     itemsMovedToRight
 }

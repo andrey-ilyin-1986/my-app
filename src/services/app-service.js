@@ -12,6 +12,6 @@ export default class AppService {
 
   getData       = ()                => this.getResource(`/data/`)
 
-  saveItem      = item              => this.putResource(`/data/${item.id}`, item)
+  saveData      = data              => this.putResource(`/data/`, data)
 
 }

@@ -1,58 +1,46 @@
 {
-  "data": [
-    {
-      "id": 11,
-      "name": "Left",
-      "data": [
-        {
-          "id": 1,
-          "name": "Left 1"
-        },
-        {
-          "id": 2,
-          "name": "Left 2"
-        },
-        {
-          "id": 3,
-          "name": "Left 3"
-        }
-      ]
-    },
-    {
-      "id": 22,
-      "name": "Middle",
-      "data": [
-        {
-          "id": 4,
-          "name": "Middle 1"
-        },
-        {
-          "id": 5,
-          "name": "Middle 2"
-        },
-        {
-          "id": 6,
-          "name": "Middle 3"
-        }
-      ]
-    },
-    {
-      "id": 33,
-      "name": "Right",
-      "data": [
-        {
-          "id": 7,
-          "name": "Right 1"
-        },
-        {
-          "id": 8,
-          "name": "Right 2"
-        },
-        {
-          "id": 9,
-          "name": "Right 3"
-        }
-      ]
-    }
-  ]
+  "data": {
+    "left": [
+      {
+        "id": 1,
+        "name": "Left 0"
+      },
+      {
+        "id": 2,
+        "name": "Left 1"
+      },
+      {
+        "id": 3,
+        "name": "Left 2"
+      }
+    ],
+    "middle": [
+      {
+        "id": 4,
+        "name": "Middle 0"
+      },
+      {
+        "id": 5,
+        "name": "Middle 1"
+      },
+      {
+        "id": 6,
+        "name": "Middle 2"
+      }
+    ],
+    "right": [
+      {
+        "id": 7,
+        "name": "Right 0"
+      },
+      {
+        "id": 8,
+        "name": "Right 1"
+      },
+      {
+        "id": 9,
+        "name": "Right 2"
+      }
+    ]
+  }
 }

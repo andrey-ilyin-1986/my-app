@@ -14,7 +14,7 @@ class Page extends Component {
     selectedIds: []
   }
 
-  onPageCheckBoxClick     = ({data})          => () => {
+  onPageCheckBoxClick     = data => ()    => () => {
     this.setState(({selected}) => {
       return {
         selected:     !selected,
@@ -23,7 +23,7 @@ class Page extends Component {
     })
   }
 
-  onItemCheckBoxClick     = ({data}) => item  => () => {
+  onItemCheckBoxClick     = data => item  => () => {
     this.setState(({selectedIds}) => {
       var newSelectedIds = selectedIds.filter(id => id !== item.id);
       if(newSelectedIds.length === selectedIds.length) newSelectedIds.push(item.id)
@@ -35,8 +35,8 @@ class Page extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const currentItems = this.props.data.data
-    const prevItems = prevProps.data.data
+    const currentItems = this.props.data
+    const prevItems = prevProps.data
     const { selectedIds } = this.state
     if(currentItems.length !== prevItems.length) {
       var newSelectedIds = currentItems.filter(item=>selectedIds.includes(item.id)).map(item=>item.id)
@@ -49,7 +49,7 @@ class Page extends Component {
 
   render() {
     const {
-      data, getItemName, getPageName,
+      data, pageKey, getItemName, getPageName,
       onItemLeftButtonClick, onItemRightButtonClick,
       onPageLeftButtonClick, onPageRightButtonClick,
     } = this.props
@@ -58,16 +58,16 @@ class Page extends Component {
 
     return <Fragment>
             <Record
-              item                  ={data}
+              item                  ={pageKey}
               className             ="list-group-item bg-info"
               getName               ={getPageName()}
               onLeftButtonClick     ={onPageLeftButtonClick(selectedIds)}
               onRightButtonClick    ={onPageRightButtonClick(selectedIds)}
-              onCheckBoxClick       ={this.onPageCheckBoxClick}
+              onCheckBoxClick       ={this.onPageCheckBoxClick(data)}
               selected              ={selected}
-              indeterminate         ={selectedIds.length < data.data.length && selectedIds.length > 0}
+              indeterminate         ={selectedIds.length < data.length && selectedIds.length > 0}
             />
-            <Repeater data={data.data} className="item-list list-group">{ (item, idx) =>
+            <Repeater data={data} className="item-list list-group">{ ({item, idx}) =>
               <Record
                 item                ={item}
                 className           ="list-group-item"

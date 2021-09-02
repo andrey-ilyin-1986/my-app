@@ -14,63 +14,64 @@ import { fetchData,
 
 class App extends Component {
 
-  onItemLeftButtonClick   = item          => !this.isVisibleLeftButtonItem(item)
+  onItemLeftButtonClick   = item          => !this.isVisibleItemLeftButton(item)
                                                 ? false
                                                 : () => this.props.itemsMovedToLeft([item])
 
-  onItemRightButtonClick  = item          => !this.isVisibleRightButtonItem(item)
+  onItemRightButtonClick  = item          => !this.isVisibleItemRightButton(item)
                                                 ? false
                                                 : () => this.props.itemsMovedToRight([item])
 
-  onPageLeftButtonClick   = ids => page   => !this.isVisibleLeftButtonPage(page)
+  onPageLeftButtonClick   = ids => page   => !this.isVisiblePageLeftButton(page)
                                                 ? false
-                                                : () => this.props.itemsMovedToLeft(page.data.filter(item => ids.includes(item.id)))
+                                                : () => this.props.itemsMovedToLeft(this.props.data[page].filter(item => ids.includes(item.id)))
 
-  onPageRightButtonClick  = ids => page   => !this.isVisibleRightButtonPage(page)
+  onPageRightButtonClick  = ids => page   => !this.isVisiblePageRightButton(page)
                                                 ? false
-                                                : () => this.props.itemsMovedToRight(page.data.filter(item => ids.includes(item.id)))
+                                                : () => this.props.itemsMovedToRight(this.props.data[page].filter(item => ids.includes(item.id)))
 
   onSaveButtonClick       = data          => () => this.props.saveData(data)
 
-  isFirstItem             = item          => this.getParentIdx(item, this.props.data) === 0
+  isLeftItem              = item          => this.getPageIdx(item, this.props.data) === 0
 
-  isLastItem              = item          => this.getParentIdx(item, this.props.data) === this.props.data.length - 1
+  isRightItem             = item          => this.getPageIdx(item, this.props.data) === this.getTabKeys(this.props.data).length - 1
 
-  isFirstPage             = page          => this.props.data.findIndex(el=>el.id === page.id) === 0
+  isLeftPage              = page          => this.getTabKeys(this.props.data).findIndex(el=>el === page) === 0
 
-  isLastPage              = page          => this.props.data.findIndex(el=>el.id === page.id) === this.props.data.length - 1
+  isRightPage             = page          => this.getTabKeys(this.props.data).findIndex(el=>el === page) === this.getTabKeys(this.props.data).length - 1
 
-  getFirstKey             = data          => data.length > 0
-                                              ? this.getTabKey(data[0])
-                                              : ''
+  getFirstKey             = data          => {
+                                            const keys = this.getTabKeys(data)
+                                            return keys.length > 0 ? keys[0] : ''
+                                          }
 
-  isKeyExist              = (data, key)   => data.filter(item=>this.getTabKey(item) === key).length > 0
+  isKeyExist              = (data, key)   => data[key] != null
 
-  isVisibleLeftButtonItem = item          => this.isLastItem(item)
-                                              || (!this.isFirstItem(item)
-                                                    && !this.isLastItem(item))
+  isVisibleItemLeftButton = item          => this.isRightItem(item)
+                                              || (!this.isLeftItem(item)
+                                                    && !this.isRightItem(item))
 
-  isVisibleRightButtonItem = item          => this.isFirstItem(item)
-                                              || (!this.isFirstItem(item)
-                                                    && !this.isLastItem(item))
+  isVisibleItemRightButton = item         => this.isLeftItem(item)
+                                              || (!this.isLeftItem(item)
+                                                    && !this.isRightItem(item))
 
-  isVisibleLeftButtonPage = page          => this.isLastPage(page)
-                                              || (!this.isFirstPage(page)
-                                                    && !this.isLastPage(page))
+  isVisiblePageLeftButton = page          => this.isRightPage(page)
+                                              || (!this.isLeftPage(page)
+                                                    && !this.isRightPage(page))
 
-  isVisibleRightButtonPage = page         => this.isFirstPage(page)
-                                              || (!this.isFirstPage(page)
-                                                    && !this.isLastPage(page))
+  isVisiblePageRightButton = page         => this.isLeftPage(page)
+                                              || (!this.isLeftPage(page)
+                                                    && !this.isRightPage(page))
 
-  getTabKey               = item          => item.name.toString().toLowerCase()
+  getTabKeys               = data         => Object.keys(data)
 
-  getPageName             = ()  => page   => <b>{`${page.name.toLowerCase()} page`}</b>
+  getPageName              = ()  => page  => <b>{`${page.toLowerCase()} page`}</b>
 
-  getItemName             = idx => item   => `${idx+1}. ${item.name}`
+  getItemName              = idx => item  => `${idx+1}. ${item.name}`
 
-  getParentIdx = (item, data)             => {
-    const parent = data.filter(parent=>parent.data.findIndex(child=>child.id === item.id) > -1)[0]
-    return data.findIndex(el=>el.id === parent.id)
+  getPageIdx = (item, data)             => {
+    const parent = this.getTabKeys(data).filter(parent=>data[parent].findIndex(child=>child.id === item.id) > -1)[0]
+    return this.getTabKeys(data).findIndex(el=>el === parent)
   }
 
   componentDidMount() {
@@ -90,7 +91,6 @@ class App extends Component {
       onPageLeftButtonClick:      this.onPageLeftButtonClick,
       onPageRightButtonClick:     this.onPageRightButtonClick,
       onSaveButtonClick:          this.onSaveButtonClick,
-      getTabKey:                  this.getTabKey,
       getPageName:                this.getPageName,
       getItemName:                this.getItemName,
     }
