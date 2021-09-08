@@ -44,9 +44,9 @@ const Record = ({ item, onLeftButtonClick, onRightButtonClick, onCheckBoxClick, 
   </div>
 
 Record.defaultProps = {
-  onLeftButtonClick:  defaultClick,
-  onRightButtonClick: defaultClick,
-  indeterminate:      false
+  onLeftButtonClick:    defaultClick,
+  onRightButtonClick:   defaultClick,
+  indeterminate:        false
 }
 
 Record.propTypes = {

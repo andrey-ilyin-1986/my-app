@@ -15,16 +15,16 @@ class Page extends Component {
   }
 
   onPageCheckBoxClick     = data => ()    => () => {
-    this.setState(({selected}) => {
+    this.setState(({ selected }) => {
       return {
         selected:     !selected,
-        selectedIds:  selected ? [] : data.map(item=>item.id)
+        selectedIds:  selected ? [] : data.map(item => item.id)
       }
     })
   }
 
   onItemCheckBoxClick     = data => item  => () => {
-    this.setState(({selectedIds}) => {
+    this.setState(({ selectedIds }) => {
       var newSelectedIds = selectedIds.filter(id => id !== item.id);
       if(newSelectedIds.length === selectedIds.length) newSelectedIds.push(item.id)
       return {
@@ -39,7 +39,7 @@ class Page extends Component {
     const prevItems = prevProps.data
     const { selectedIds } = this.state
     if(currentItems.length !== prevItems.length) {
-      var newSelectedIds = currentItems.filter(item=>selectedIds.includes(item.id)).map(item=>item.id)
+      var newSelectedIds = currentItems.filter(item => selectedIds.includes(item.id)).map(item => item.id)
       this.setState({
         selected:     currentItems.length > 0 && currentItems.length === newSelectedIds.length,
         selectedIds:  newSelectedIds
@@ -50,8 +50,10 @@ class Page extends Component {
   render() {
     const {
       data, pageKey, getItemName, getPageName,
-      onItemLeftButtonClick, onItemRightButtonClick,
-      onPageLeftButtonClick, onPageRightButtonClick,
+      onItemLeftButtonClick,    onItemRightButtonClick,
+      onPageLeftButtonClick,    onPageRightButtonClick,
+      isVisibleItemLeftButton,  isVisibleItemRightButton,
+      isVisiblePageLeftButton,  isVisiblePageRightButton
     } = this.props
 
     const { selected, selectedIds } = this.state
@@ -65,8 +67,8 @@ class Page extends Component {
         selected:             selected,
         indeterminate:        selectedIds.length < data.length && selectedIds.length > 0
       }
-      if(onPageLeftButtonClick  (pageKey))  props.onLeftButtonClick   = onPageLeftButtonClick   (pageKey)(selectedIds)
-      if(onPageRightButtonClick (pageKey))  props.onRightButtonClick  = onPageRightButtonClick  (pageKey)(selectedIds)
+      if(isVisiblePageLeftButton  (pageKey))  props.onLeftButtonClick   = onPageLeftButtonClick   (pageKey)(selectedIds)
+      if(isVisiblePageRightButton (pageKey))  props.onRightButtonClick  = onPageRightButtonClick  (pageKey)(selectedIds)
       return props
     }
 
@@ -80,8 +82,8 @@ class Page extends Component {
         onCheckBoxClick:    this.onItemCheckBoxClick(data),
         selected:           selectedIds.filter(id => id === item.id).length > 0
       }
-      if(onItemLeftButtonClick  (item))  props.onLeftButtonClick    = onItemLeftButtonClick   (item)
-      if(onItemRightButtonClick (item))  props.onRightButtonClick   = onItemRightButtonClick  (item)
+      if(isVisibleItemLeftButton  (item))  props.onLeftButtonClick    = onItemLeftButtonClick   (item)
+      if(isVisibleItemRightButton (item))  props.onRightButtonClick   = onItemRightButtonClick  (item)
       return props
     }
 
@@ -89,7 +91,7 @@ class Page extends Component {
             <Record     { ...pageRecordProps() }/>
             <Repeater   data={ data }
                         className="item-list list-group"
-            >{ ({item, idx}) =>
+            >{ ({ item, idx }) =>
               <Record   { ...itemRecordProps({ item, idx }) }/>
             }</Repeater>
           </Fragment>

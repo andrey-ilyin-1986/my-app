@@ -3,7 +3,7 @@ import { AppConsumer }  from '../app-context'
 
 const withAppProps = Wrapped => props =>
   <AppConsumer>
-    { appProps => <Wrapped {...{...props, ...appProps}} /> }
+    { appProps => <Wrapped { ...{ ...props, ...appProps } } /> }
   </AppConsumer>
 
 export default withAppProps

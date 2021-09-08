@@ -4,15 +4,15 @@ import { withAppProps }   from '../hoc-helpers'
 import Pages              from '../pages'
 import Tabs               from '../tabs'
 
-const Content = ({data, tabKey, onSaveButtonClick}) =>
+const Content = ({ data, tabKey, onSaveButtonClick }) =>
   <div className="container">
     <h1>Welcome to my app</h1>
-    <Pages data={data}/>
-    <Tabs data={data} activeTab={tabKey}/>
-    <Pages data={{[tabKey] : data[tabKey]}} />
+    <Pages data={ data }/>
+    <Tabs data={ data } activeTab={ tabKey }/>
+    <Pages data={ { [tabKey] : data[tabKey] } } />
     <div className="row">
       <div className="col-12 d-grid gap-2 d-md-flex justify-content-md-center">
-        <button type="button" className="btn btn-primary btn-lg" onClick={onSaveButtonClick(data)}>Save</button>
+        <button type="button" className="btn btn-primary btn-lg" onClick={ onSaveButtonClick(data) }>Save</button>
       </div>
     </div>
   </div>
