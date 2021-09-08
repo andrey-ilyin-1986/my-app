@@ -40,9 +40,9 @@ const saveDataError = error     => {
     }
 }
 
-const itemsMovedTo  = items  => {
+const itemsMoved    = items     => {
     return {
-        type:       ActionTypes.itemsMovedTo,
+        type:       ActionTypes.itemsMoved,
         payload:    items
     }
 }
@@ -66,5 +66,5 @@ const saveData = (appService, dispatch)     => data     => {
 export {
     fetchData,
     saveData,
-    itemsMovedTo
+    itemsMoved
 }

@@ -8,26 +8,26 @@ import   Content                          from '../content'
 import { withAppService }                 from '../hoc-helpers'
 import { fetchData,
          saveData,
-         itemsMovedTo }                   from '../../actions'
+         itemsMoved   }                   from '../../actions'
 
 class App extends Component {
 
   onItemLeftButtonClick   = item                => () =>  {
                                                     const { currentPage, prevPage } = this.getItemInfo(item)
-                                                    return this.props.itemsMovedTo([{ id: item.id, from: currentPage, to: prevPage }])
+                                                    return this.props.itemsMoved([{ id: item.id, from: currentPage, to: prevPage }])
                                                 }
 
   onItemRightButtonClick  = item                => () => {
                                                   const { currentPage, nextPage } = this.getItemInfo(item)
-                                                  return this.props.itemsMovedTo([{ id: item.id, from: currentPage, to: nextPage }])
+                                                  return this.props.itemsMoved([{ id: item.id, from: currentPage, to: nextPage }])
                                                 }
 
-  onPageLeftButtonClick   = page  =>  ids       => () => this.props.itemsMovedTo(this.props.data[page].filter(item => ids.includes(item.id)).map(item => {
+  onPageLeftButtonClick   = page  =>  ids       => () => this.props.itemsMoved(this.props.data[page].filter(item => ids.includes(item.id)).map(item => {
                                                   const { currentPage, prevPage } = this.getItemInfo(item)
                                                   return { id: item.id, from: currentPage, to: prevPage }
                                                 }))
 
-  onPageRightButtonClick  = page  =>  ids       => () => this.props.itemsMovedTo(this.props.data[page].filter(item => ids.includes(item.id)).map(item => {
+  onPageRightButtonClick  = page  =>  ids       => () => this.props.itemsMoved(this.props.data[page].filter(item => ids.includes(item.id)).map(item => {
                                                   const { currentPage, nextPage } = this.getItemInfo(item)
                                                   return { id: item.id, from: currentPage, to: nextPage }
                                                 }))
@@ -38,9 +38,9 @@ class App extends Component {
 
   isRightItem             = item                => this.getPageIdx(item) === this.getTabKeys(this.props.data).length - 1
 
-  isLeftPage              = page                => this.getTabKeys().findIndex(el=>el === page) === 0
+  isLeftPage              = page                => this.getTabKeys().findIndex(el => el === page) === 0
 
-  isRightPage             = page                => this.getTabKeys().findIndex(el=>el === page) === this.getTabKeys().length - 1
+  isRightPage             = page                => this.getTabKeys().findIndex(el => el === page) === this.getTabKeys().length - 1
 
   getFirstKey             = ()                  => {
                                                   const keys = this.getTabKeys()
@@ -129,7 +129,7 @@ const mapDispatchToProps  = (dispatch, { appService }) => {
   return {
     fetchData:            fetchData(appService, dispatch),
     saveData:             saveData(appService, dispatch),
-    itemsMovedTo:         items => dispatch(itemsMovedTo(items))
+    itemsMoved:           items => dispatch(itemsMoved(items))
   }
 }
 

@@ -61,7 +61,7 @@ const reducer           = (state = initialState, action)    => {
                 saving: false,
                 error: action.payload
             }
-        case ActionTypes.itemsMovedTo:
+        case ActionTypes.itemsMoved:
             return {
                 ...state,
                 data: action.payload.reduce((data, item) => moveItem({ ...item, data }), state.data)
