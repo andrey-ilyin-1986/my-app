@@ -1,3 +1,5 @@
+import   ActionTypes    from '../actions/types'
+
 const initialState = {
     data: [],
     loading: true,
@@ -5,7 +7,7 @@ const initialState = {
     error: null
 }
 
-const getItemInfo       = (item, data)                  => {
+const getItemInfo       = ({ item, data })                  => {
     const pages         = Object.keys(data)
     const currentPage   = pages.filter(parent=>data[parent].findIndex(child=>child.id === item.id) > -1)[0]
     const pageIdx       = pages.findIndex(el=>el === currentPage)
@@ -15,7 +17,7 @@ const getItemInfo       = (item, data)                  => {
     return { itemIdx, currentPage, prevPage, nextPage }
 }
 
-const moveItem          = (itemIdx, from, to, data)     => {
+const moveItem          = ({ itemIdx, from, to, data })     => {
     return {
         ...data,
         [to]: [
@@ -29,70 +31,80 @@ const moveItem          = (itemIdx, from, to, data)     => {
     }
 }
 
-const moveItemToLeft    = (item, data)                  => {
-    const { itemIdx, currentPage, prevPage } = getItemInfo(item, data)
-    return moveItem(itemIdx, currentPage, prevPage, data)
+const moveItemToLeft    = ({ item, data })                  => {
+    const { itemIdx, currentPage, prevPage } = getItemInfo({ item, data })
+    return moveItem({
+        itemIdx,
+        from:   currentPage,
+        to:     prevPage,
+        data
+    })
 }
 
-const moveItemToRight   = (item, data)                  => {
-    const { itemIdx, currentPage, nextPage } = getItemInfo(item, data)
-    return moveItem(itemIdx, currentPage, nextPage, data)
+const moveItemToRight   = ({ item, data })                  => {
+    const { itemIdx, currentPage, nextPage } = getItemInfo({ item, data })
+    return moveItem({
+        itemIdx,
+        from:   currentPage,
+        to:     nextPage,
+        data
+    })
 }
 
-const moveItemsToLeft     = (items, data)               => items.reduce((data, item)=>moveItemToLeft(item, data), data)
+const moveItemsToLeft     = ({ items, data })               => items.reduce((data, item) => moveItemToLeft({ item, data }), data)
 
-const moveItemsToRight    = (items, data)               => items.reduce((data, item)=>moveItemToRight(item, data), data)
+const moveItemsToRight    = ({ items, data })               => items.reduce((data, item) => moveItemToRight({ item, data }), data)
 
 const reducer = (state = initialState, action) => {
     switch(action.type) {
-        case 'FETCH_DATA_REQUEST':
+        case ActionTypes.fetchDataRequest:
             return {
                 ...state,
                 data: [],
                 loading: true,
                 error: null
             }
-        case 'FETCH_DATA_SUCCESS':
+        case ActionTypes.fetchDataSuccess:
             return {
                 ...state,
                 data: action.payload,
                 loading: false,
                 error: null
             }
-        case 'FETCH_DATA_ERROR':
+        case ActionTypes.fetchDataError:
             return {
                 ...state,
                 data: [],
                 loading: false,
                 error: action.payload
             }
-        case 'SAVE_DATA_REQUEST':
+        case ActionTypes.saveDataRequest:
             return {
                 ...state,
                 saving: true,
                 error: null
             }
-        case 'SAVE_DATA_SUCCESS':
+        case ActionTypes.saveDataSuccess:
             return {
                 ...state,
                 saving: false,
                 error: null
             }
-        case 'SAVE_DATA_ERROR':
+        case ActionTypes.saveDataError:
             return {
                 ...state,
                 saving: false,
                 error: action.payload
             }
-        case 'ITEMS_MOVED_TO_LEFT':
+        case ActionTypes.itemsMovedToLeft:
             return {
                 ...state,
-                data: moveItemsToLeft(action.payload, state.data)
+                data: moveItemsToLeft({ items: action.payload, data: state.data })
             }
-        case 'ITEMS_MOVED_TO_RIGHT':
+        case ActionTypes.itemsMovedToRight:
             return {
                 ...state,
-                data: moveItemsToRight(action.payload, state.data)
+                data: moveItemsToRight({ items: action.payload, data: state.data })
             }
         default:
             return state

@@ -12,8 +12,8 @@ const store                     = createStore(reducer)
 const appService                = new AppService()
 
 ReactDOM.render(
-    <Provider store={store}>
-        <AppServiceProvider value={appService}>
+    <Provider store={ store }>
+        <AppServiceProvider value={ appService }>
             <App />
         </AppServiceProvider>
     </Provider>,

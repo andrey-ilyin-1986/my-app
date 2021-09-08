@@ -22,13 +22,13 @@ class App extends Component {
                                                 ? false
                                                 : () => this.props.itemsMovedToRight([item])
 
-  onPageLeftButtonClick   = ids => page   => !this.isVisiblePageLeftButton(page)
+  onPageLeftButtonClick   = page          =>  !this.isVisiblePageLeftButton(page)
                                                 ? false
-                                                : () => this.props.itemsMovedToLeft(this.props.data[page].filter(item => ids.includes(item.id)))
+                                                : ids => () => this.props.itemsMovedToLeft(this.props.data[page].filter(item => ids.includes(item.id)))
 
-  onPageRightButtonClick  = ids => page   => !this.isVisiblePageRightButton(page)
+  onPageRightButtonClick  = page          =>  !this.isVisiblePageRightButton(page)
                                                 ? false
-                                                : () => this.props.itemsMovedToRight(this.props.data[page].filter(item => ids.includes(item.id)))
+                                                : ids => () => this.props.itemsMovedToRight(this.props.data[page].filter(item => ids.includes(item.id)))
 
   onSaveButtonClick       = data          => () => this.props.saveData(data)
 

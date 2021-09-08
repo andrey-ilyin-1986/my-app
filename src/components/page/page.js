@@ -56,28 +56,41 @@ class Page extends Component {
 
     const { selected, selectedIds } = this.state
 
+    const pageRecordProps = ()              => {
+      const props = {
+        item:                 pageKey,
+        className:            "list-group-item bg-info",
+        getName:              getPageName(),
+        onCheckBoxClick:      this.onPageCheckBoxClick(data),
+        selected:             selected,
+        indeterminate:        selectedIds.length < data.length && selectedIds.length > 0
+      }
+      if(onPageLeftButtonClick  (pageKey))  props.onLeftButtonClick   = onPageLeftButtonClick   (pageKey)(selectedIds)
+      if(onPageRightButtonClick (pageKey))  props.onRightButtonClick  = onPageRightButtonClick  (pageKey)(selectedIds)
+      return props
+    }
+
+    const itemRecordProps = ({ item, idx })  => {
+      const props = {
+        item:               item,
+        className:          "list-group-item",
+        getName:            getItemName(idx),
+        onLeftButtonClick:  onItemLeftButtonClick,
+        onRightButtonClick: onItemRightButtonClick,
+        onCheckBoxClick:    this.onItemCheckBoxClick(data),
+        selected:           selectedIds.filter(id => id === item.id).length > 0
+      }
+      if(onItemLeftButtonClick  (item))  props.onLeftButtonClick    = onItemLeftButtonClick   (item)
+      if(onItemRightButtonClick (item))  props.onRightButtonClick   = onItemRightButtonClick  (item)
+      return props
+    }
+
     return <Fragment>
-            <Record
-              item                  ={pageKey}
-              className             ="list-group-item bg-info"
-              getName               ={getPageName()}
-              onLeftButtonClick     ={onPageLeftButtonClick(selectedIds)}
-              onRightButtonClick    ={onPageRightButtonClick(selectedIds)}
-              onCheckBoxClick       ={this.onPageCheckBoxClick(data)}
-              selected              ={selected}
-              indeterminate         ={selectedIds.length < data.length && selectedIds.length > 0}
-            />
-            <Repeater data={data} className="item-list list-group">{ ({item, idx}) =>
-              <Record
-                item                ={item}
-                className           ="list-group-item"
-                getName             ={getItemName(idx)}
-                onLeftButtonClick   ={onItemLeftButtonClick}
-                onRightButtonClick  ={onItemRightButtonClick}
-                onCheckBoxClick     ={this.onItemCheckBoxClick(data)}
-                selected            ={selectedIds.filter(id => id === item.id).length > 0}
-                indeterminate       ={false}
-              />
+            <Record     { ...pageRecordProps() }/>
+            <Repeater   data={ data }
+                        className="item-list list-group"
+            >{ ({item, idx}) =>
+              <Record   { ...itemRecordProps({ item, idx }) }/>
             }</Repeater>
           </Fragment>
   }

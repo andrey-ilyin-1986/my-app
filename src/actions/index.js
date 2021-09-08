@@ -1,54 +1,56 @@
+import   ActionTypes    from './types'
+
 const fetchDataRequest = ()     => {
     return {
-        type: 'FETCH_DATA_REQUEST'
+        type:       ActionTypes.fetchDataRequest
     }
 }
 
 const fetchDataSuccess = data   => {
     return {
-        type: 'FETCH_DATA_SUCCESS',
-        payload: data
+        type:       ActionTypes.fetchDataSuccess,
+        payload:    data
     }
 }
 
 const fetchDataError = error    => {
     return {
-        type: 'FETCH_DATA_ERROR',
-        payload: error
+        type:       ActionTypes.fetchDataError,
+        payload:    error
     }
 }
 
 const saveDataRequest = ()      => {
     return {
-        type: 'SAVE_DATA_REQUEST'
+        type:       ActionTypes.saveDataRequest
     }
 }
 
 const saveDataSuccess = data    => {
     return {
-        type: 'SAVE_DATA_SUCCESS',
-        payload: data
+        type:       ActionTypes.saveDataSuccess,
+        payload:    data
     }
 }
 
 const saveDataError = error     => {
     return {
-        type: 'SAVE_DATA_ERROR',
-        payload: error
+        type:       ActionTypes.saveDataError,
+        payload:    error
     }
 }
 
 const itemsMovedToLeft = items  => {
     return {
-        type: 'ITEMS_MOVED_TO_LEFT',
-        payload: items
+        type:       ActionTypes.itemsMovedToLeft,
+        payload:    items
     }
 }
 
 const itemsMovedToRight = items => {
     return {
-        type: 'ITEMS_MOVED_TO_RIGHT',
-        payload: items
+        type:       ActionTypes.itemsMovedToRight,
+        payload:    items
     }
 }
 
