@@ -5,7 +5,7 @@ import { withAppProps } from '../hoc-helpers'
 import Page             from '../page'
 
 const Pages = ({ data }) =>
-  <Repeater data={ data } className="row">{ ({ item,key }) =>
+  <Repeater data={ data } className="row">{ ({ item, key }) =>
     <div className="col">
       <Page data={ item } pageKey={ key } />
     </div>
