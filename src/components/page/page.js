@@ -77,8 +77,6 @@ class Page extends Component {
         item:               item,
         className:          "list-group-item",
         getName:            getItemName(idx),
-        onLeftButtonClick:  onItemLeftButtonClick,
-        onRightButtonClick: onItemRightButtonClick,
         onCheckBoxClick:    this.onItemCheckBoxClick(data),
         selected:           selectedIds.filter(id => id === item.id).length > 0
       }

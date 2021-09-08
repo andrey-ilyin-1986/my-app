@@ -8,36 +8,46 @@ import   Content                          from '../content'
 import { withAppService }                 from '../hoc-helpers'
 import { fetchData,
          saveData,
-         itemsMovedToLeft,
-         itemsMovedToRight }               from '../../actions'
-
+         itemsMovedTo }                   from '../../actions'
 
 class App extends Component {
 
-  onItemLeftButtonClick   = item                => () => this.props.itemsMovedToLeft([item])
+  onItemLeftButtonClick   = item                => () =>  {
+                                                    const { currentPage, prevPage } = this.getItemInfo(item)
+                                                    return this.props.itemsMovedTo([{ id: item.id, from: currentPage, to: prevPage }])
+                                                }
 
-  onItemRightButtonClick  = item                => () => this.props.itemsMovedToRight([item])
+  onItemRightButtonClick  = item                => () => {
+                                                  const { currentPage, nextPage } = this.getItemInfo(item)
+                                                  return this.props.itemsMovedTo([{ id: item.id, from: currentPage, to: nextPage }])
+                                                }
 
-  onPageLeftButtonClick   = page  =>  ids       => () => this.props.itemsMovedToLeft(this.props.data[page].filter(item => ids.includes(item.id)))
+  onPageLeftButtonClick   = page  =>  ids       => () => this.props.itemsMovedTo(this.props.data[page].filter(item => ids.includes(item.id)).map(item => {
+                                                  const { currentPage, prevPage } = this.getItemInfo(item)
+                                                  return { id: item.id, from: currentPage, to: prevPage }
+                                                }))
 
-  onPageRightButtonClick  = page  =>  ids       => () => this.props.itemsMovedToRight(this.props.data[page].filter(item => ids.includes(item.id)))
+  onPageRightButtonClick  = page  =>  ids       => () => this.props.itemsMovedTo(this.props.data[page].filter(item => ids.includes(item.id)).map(item => {
+                                                  const { currentPage, nextPage } = this.getItemInfo(item)
+                                                  return { id: item.id, from: currentPage, to: nextPage }
+                                                }))
 
   onSaveButtonClick       = data                => () => this.props.saveData(data)
 
-  isLeftItem              = item                => this.getPageIdx({ item, data: this.props.data }) === 0
+  isLeftItem              = item                => this.getPageIdx(item) === 0
 
-  isRightItem             = item                => this.getPageIdx({ item, data: this.props.data }) === this.getTabKeys(this.props.data).length - 1
+  isRightItem             = item                => this.getPageIdx(item) === this.getTabKeys(this.props.data).length - 1
 
-  isLeftPage              = page                => this.getTabKeys(this.props.data).findIndex(el=>el === page) === 0
+  isLeftPage              = page                => this.getTabKeys().findIndex(el=>el === page) === 0
 
-  isRightPage             = page                => this.getTabKeys(this.props.data).findIndex(el=>el === page) === this.getTabKeys(this.props.data).length - 1
+  isRightPage             = page                => this.getTabKeys().findIndex(el=>el === page) === this.getTabKeys().length - 1
 
-  getFirstKey             = data                => {
-                                                  const keys = this.getTabKeys(data)
+  getFirstKey             = ()                  => {
+                                                  const keys = this.getTabKeys()
                                                   return keys.length > 0 ? keys[0] : ''
                                                 }
 
-  isKeyExist              = ({ data, tabKey })  => data[tabKey] != null
+  isKeyExist              = key                 => this.props.data[key] != null
 
   isVisibleItemLeftButton = item                => this.isRightItem(item)
                                                     || (!this.isLeftItem(item)
@@ -47,7 +57,7 @@ class App extends Component {
                                                     || (!this.isLeftItem(item)
                                                           && !this.isRightItem(item))
 
-  isVisiblePageLeftButton = page                => this.isRightPage(page)
+  isVisiblePageLeftButton  = page               => this.isRightPage(page)
                                                     || (!this.isLeftPage(page)
                                                           && !this.isRightPage(page))
 
@@ -55,15 +65,24 @@ class App extends Component {
                                                     || (!this.isLeftPage(page)
                                                           && !this.isRightPage(page))
 
-  getTabKeys               = data               => Object.keys(data)
+  getTabKeys               = ()                 => Object.keys(this.props.data)
 
   getPageName              = ()  => page        => <b>{ `${ page.toLowerCase() } page` }</b>
 
   getItemName              = idx => item        => `${ idx + 1 }. ${ item.name }`
 
-  getPageIdx = ({ item, data })                 => {
-    const parent = this.getTabKeys(data).filter(parent => data[parent].findIndex(child=>child.id === item.id) > -1)[0]
-    return this.getTabKeys(data).findIndex(el=>el === parent)
+  getPageIdx               = item               => {
+    const parent = this.getTabKeys().filter(parent => this.props.data[parent].findIndex(child => child.id === item.id) > -1)[0]
+    return this.getTabKeys().findIndex(el => el === parent)
+  }
+
+  getItemInfo              = item              => {
+    const pages            = this.getTabKeys()
+    const currentPage      = pages.filter(parent => this.props.data[parent].findIndex(child => child.id === item.id) > -1)[0]
+    const pageIdx          = pages.findIndex(el => el === currentPage)
+    const prevPage         = pages[pageIdx - 1]
+    const nextPage         = pages[pageIdx + 1]
+    return { currentPage, prevPage, nextPage }
   }
 
   componentDidMount() {
@@ -94,9 +113,9 @@ class App extends Component {
     return <AppProvider value={ appPublicProps }>
             <BrowserRouter>
               <Route path="/:tabKey?" render={ ({ match: { params : { tabKey } } }) =>
-                this.isKeyExist({ data, tabKey })
+                this.isKeyExist(tabKey)
                   ? <Content data={ data } tabKey={ tabKey }/>
-                  : <Redirect  to={ `/${ this.getFirstKey(data) }` }/>
+                  : <Redirect  to={ `/${ this.getFirstKey() }` }/>
               }></Route>
             </BrowserRouter>
           </AppProvider>
@@ -110,8 +129,7 @@ const mapDispatchToProps  = (dispatch, { appService }) => {
   return {
     fetchData:            fetchData(appService, dispatch),
     saveData:             saveData(appService, dispatch),
-    itemsMovedToLeft:     items => dispatch(itemsMovedToLeft(items)),
-    itemsMovedToRight:    items => dispatch(itemsMovedToRight(items))
+    itemsMovedTo:         items => dispatch(itemsMovedTo(items))
   }
 }
 

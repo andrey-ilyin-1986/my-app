@@ -5,8 +5,7 @@ const ActionTypes = {
     saveDataRequest:    'SAVE_DATA_REQUEST',
     saveDataSuccess:    'SAVE_DATA_SUCCESS',
     saveDataError:      'SAVE_DATA_ERROR',
-    itemsMovedToLeft:   'ITEMS_MOVED_TO_LEFT',
-    itemsMovedToRight:  'ITEMS_MOVED_TO_RIGHT'
+    itemsMovedTo:       'ITEMS_MOVED_TO'
 }
 
 export default ActionTypes
