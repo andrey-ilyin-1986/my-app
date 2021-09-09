@@ -36,7 +36,7 @@ class App extends Component {
 
   isLeftItem              = item                => this.getPageIdx(item) === 0
 
-  isRightItem             = item                => this.getPageIdx(item) === this.getTabKeys(this.props.data).length - 1
+  isRightItem             = item                => this.getPageIdx(item) === this.getTabKeys().length - 1
 
   isLeftPage              = page                => this.getTabKeys().findIndex(el => el === page) === 0
 
@@ -110,15 +110,15 @@ class App extends Component {
       getItemName:                this.getItemName,
     }
 
-    return <AppProvider value={ appPublicProps }>
-            <BrowserRouter>
-              <Route path="/:tabKey?" render={ ({ match: { params : { tabKey } } }) =>
-                this.isKeyExist(tabKey)
-                  ? <Content data={ data } tabKey={ tabKey }/>
-                  : <Redirect  to={ `/${ this.getFirstKey() }` }/>
-              }></Route>
-            </BrowserRouter>
-          </AppProvider>
+    return  <AppProvider value={ appPublicProps }>
+              <BrowserRouter>
+                <Route path="/:tabKey?" render={ ({ match: { params : { tabKey } } }) =>
+                  this.isKeyExist(tabKey)
+                    ? <Content data={ data } tabKey={ tabKey }/>
+                    : <Redirect  to={ `/${ this.getFirstKey() }` }/>
+                }></Route>
+              </BrowserRouter>
+            </AppProvider>
 
   }
 }

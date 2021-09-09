@@ -85,14 +85,14 @@ class Page extends Component {
       return props
     }
 
-    return <Fragment>
-            <Record     { ...pageRecordProps() }/>
-            <Repeater   data={ data }
-                        className="item-list list-group"
-            >{ ({ item, idx }) =>
-              <Record   { ...itemRecordProps({ item, idx }) }/>
-            }</Repeater>
-          </Fragment>
+    return  <Fragment>
+              <Record     { ...pageRecordProps() }/>
+              <Repeater   data={ data }
+                          className="item-list list-group"
+              >{          ({ item, idx }) =>
+                <Record   { ...itemRecordProps({ item, idx }) }/>
+              }</Repeater>
+            </Fragment>
   }
 }
 
